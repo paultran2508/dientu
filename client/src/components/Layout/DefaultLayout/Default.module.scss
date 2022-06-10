@@ -1,0 +1,29 @@
+.wrapper{
+  display: flex;
+  flex-direction: column;
+  max-width: 1050px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  
+}
+
+.content{
+  max-width: 1000px;
+}
+
+.header{
+  grid-column: 12 span;
+ 
+}
+
+.sidebar{
+  
+  grid-column: 3 span;
+ 
+
+}
+.content{
+  
+  grid-column: 9 span;
+}
