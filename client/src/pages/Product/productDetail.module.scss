@@ -1,0 +1,9 @@
+.product-detail{
+  padding: 1px ;
+  &:hover{
+    &:nth-child(n) {
+      box-shadow: 1px 1px 3px;
+      margin: -1px 1px 1px -1px;
+    }
+  }
+}

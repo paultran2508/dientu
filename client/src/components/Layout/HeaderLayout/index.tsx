@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { Children } from "../../../types/Children"
-import Header from "../components/Header"
+import { Header } from "../components/Header"
 
 const HeaderLayout: FunctionComponent<Children> = ({ children }) => {
   return (

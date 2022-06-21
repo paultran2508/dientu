@@ -1,4 +1,4 @@
-export { default as DefaultLayout } from "./DefaultLayout"
+export { DefaultLayout } from "./DefaultLayout"
 
 
 

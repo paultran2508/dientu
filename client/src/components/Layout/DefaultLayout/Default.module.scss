@@ -1,29 +1,25 @@
 .wrapper{
+  --height-head: 5rem;
   display: flex;
-  flex-direction: column;
-  max-width: 1050px;
-  margin: auto;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  
-}
-
-.content{
-  max-width: 1000px;
+  flex-wrap: wrap;
+ 
 }
 
 .header{
-  grid-column: 12 span;
+  width: 100%;
+  background-color: var(--bg-2);
+  height: var(--height-head);
  
 }
 
 .sidebar{
-  
-  grid-column: 3 span;
- 
-
+  width: 300px;
+  height:calc(99vh - var(--height-head));
+  background-color: var(--bg-2);
 }
 .content{
-  
-  grid-column: 9 span;
+  grid-area: content;
+  background-color: var(--bg-3);
+  flex: 1;
+ 
 }

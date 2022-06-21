@@ -3,16 +3,15 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 :root{
-  --primary-2: #5800e6;
-  --rbg-primary-2: 75, 0, 200;
-  --primary-1: #5800c8;
-  --rbg-primary-1: 128, 0, 255;
+  --primary-2: rgb(88, 0, 230);
+  --rgb-primary-2: 75, 0, 230;
+  --primary-1: rgb(88, 0, 200);
+  --rgb-primary-1: 88, 0, 200;
   --border-radius: 12px;
   --width-search: 300px;
 }
 
 html{
-  // font-size: 62.5%;
   &[data-theme='light']{
     --rgb-bg-3: 255, 255, 255;
     --rgb-bg-2: 225 225 225;
@@ -21,36 +20,36 @@ html{
     --bg-2: rgb( 225, 225, 225);
     --bg-1: rgb(200, 200, 200);
     --tx-3: rgb(100, 100, 100);
-    --tx-2: #464646;
+    --tx-2: rgb(70, 70, 70);
     --tx-1: rgb(0, 0, 0);
     --rgb-tx-3: 100 100 100;
     --rgb-tx-2: 70 70 70;
     --rgb-tx-1: 0 0 0;
+    --bg--hv: #F0F2F5;
   }
   &[data-theme='dark']{
-    --tx-1: rgb( 255 255 255);
-    --tx-2: rgb( 225, 225, 225);
-    --tx-3: rgb(200, 200, 200);
-    --bg-1: rgb(100, 100, 100);
-    --bg-2: rgb(70, 70, 70);
-    --bg-3: rgb(0, 0, 0);
-    --rgb-tx-1:  255 255 255;
+    --tx-1: rgb(228, 230, 235);
+    --tx-2: rgb(206, 206, 206);
+    --tx-3: rgb(90, 90, 90);
+    --bg-1: rgb(24, 25, 26);
+    --bg-2: rgb(36, 37, 38);
+    --bg-3: rgb(58, 59, 60);
+    --bg-hv: rgba(255,255,255,0.1);
+    --rgb-tx-1: 228, 230, 235;
     --rgb-tx-2: 225, 225, 225;
-    --rgb-tx-3: 200, 200, 200;
-    --rgb-bg-1: 100, 100, 100;
-    --rgb-bg-2: 70, 70, 70;
-    --rgb-bg-3: 0, 0, 0;
-  }
-  
+    --rgb-tx-3:24, 25, 26;
+    --rgb-bg-1: 24, 25, 26;
+    --rgb-bg-2: 36, 37, 38;
+    --rgb-bg-3:58, 59, 60;
+  } 
 }
-
 
 
 body{
   font-family: 'Roboto', sans-serif;
-  // font-size: 1.6rem;
-  // line-height: 1.5;
-  // text-rendering: optimizeSpeed;  
-  // background-color: var(--bg-2);
-  // color: var(--tx-2);
+  font-size: 1.6rem;
+  line-height: 1.5;
+  text-rendering: optimizeSpeed;  
+  background-color: var(--bg-1);
+  color: var(--tx-1);
 }
