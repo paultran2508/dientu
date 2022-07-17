@@ -1,0 +1,15 @@
+.button-custom{
+  border: none;
+  background-color: var(--primary-1);
+  outline: none;
+  font-size: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  gap: .5rem;
+  color: rgba($color: #fff, $alpha: .8);
+  &:hover{
+    background-color: var(--primary-2);
+  }
+}

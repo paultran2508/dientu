@@ -1,4 +1,0 @@
-export { DefaultLayout } from "./DefaultLayout"
-
-
-

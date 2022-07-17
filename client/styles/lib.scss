@@ -1,0 +1,16 @@
+.fl{
+  display: flex;
+  flex-wrap: wrap;
+  &.bw{
+    align-items: center;
+    justify-content: space-between;
+  }
+  &.center{
+    align-items: center;
+    justify-content: center;
+  }
+  
+}
+.fl-1{
+  flex: 1;
+}

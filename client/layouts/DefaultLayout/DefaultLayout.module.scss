@@ -1,0 +1,21 @@
+.wrapper{
+  --height-head: 4rem;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 4rem 1fr;
+  flex-wrap: wrap;
+  height:100vh;
+}
+
+.navbar{
+  width: 100%;
+  grid-column: span 2;
+  background-color: var(--bg-2);
+  height: var(--height-head);
+}
+.sidebar{
+  background-color: var(--bg-2);   
+}
+.content{
+  background-color: inherit;
+}

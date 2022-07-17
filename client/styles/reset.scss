@@ -1,0 +1,37 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+input{
+  color: inherit;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-size: 1rem;
+  padding: .5rem;
+  background-color: var(--bg-3);
+}
+a{
+  display: inline-block;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  li{
+    cursor: pointer;
+    padding: .5rem;
+    &:hover{
+      background-color: var(--bg-hv);
+    }
+   
+  }
+}
+p, span{
+  font-size: inherit;
+}
+.material-icons {
+  font-size: inherit;
+}
