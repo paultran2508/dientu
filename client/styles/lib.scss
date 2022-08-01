@@ -1,16 +1,19 @@
-.fl{
+.fl {
   display: flex;
   flex-wrap: wrap;
-  &.bw{
+  &.bw {
     align-items: center;
     justify-content: space-between;
   }
-  &.center{
+  &.center {
     align-items: center;
     justify-content: center;
   }
-  
 }
-.fl-1{
+.fl-1 {
   flex: 1;
+}
+#__react-alert__ {
+  //style alert
+  width: 100%;
 }

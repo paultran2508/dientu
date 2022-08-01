@@ -1,5 +1,8 @@
 import { Field, ID, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Theme } from './types/Theme';
+
+
 
 @ObjectType()
 @Entity()
@@ -25,7 +28,15 @@ export class User extends BaseEntity {
   updateAt: Date
 
   @Field()
+  @Column({ type: "enum", enum: Theme, default: Theme.DARK })
+  theme: Theme
+
+  @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   createAt: Date
+
+  @Field()
+  @Column({ type: String, default: '/avatar_1.png' })
+  avatar: string
 
 }

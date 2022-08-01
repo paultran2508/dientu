@@ -1,5 +1,6 @@
 import { Field, ObjectType } from 'type-graphql';
 import { User } from './../../entities/User';
+import { FieldErrorUser } from './FieldErrorUser';
 import { IMutationResponse } from './MutationResponse';
 
 @ObjectType({ implements: IMutationResponse })
@@ -12,6 +13,9 @@ export class UserMutationResponse implements IMutationResponse {
   @Field({ nullable: true })
   user?: User
 
-  @Field({ nullable: true })
+  @Field(_type => String, { nullable: true })
   accessToken?: string
+
+  @Field(_type => [FieldErrorUser], { nullable: true })
+  fieldError?: FieldErrorUser[]
 }

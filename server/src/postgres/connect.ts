@@ -1,6 +1,6 @@
-import { User } from '../entities/User';
 import 'reflect-metadata'
 import { DataSource } from "typeorm"
+import entities from '../entities';
 
 interface DbVar {
   username: string,
@@ -19,7 +19,7 @@ export const AppConnectPostgres = async ({ username, password, host, database }:
     database,
     synchronize: true,
     logging: true,
-    entities: [User]
+    entities
 
     // subscribers: [],
     // migrations: [],

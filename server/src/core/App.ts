@@ -5,9 +5,7 @@ import { AppInput } from './types/AppInput';
 
 export class App {
 
-  constructor(public appInput: AppInput) {
-
-  }
+  constructor(public appInput: AppInput) { }
 
   connects() {
 
@@ -30,7 +28,6 @@ export class App {
 
   run() {
     this.connects()
-
     this.startServer()
   }
 

@@ -1,11 +1,12 @@
-// import { NextPageContext } from 'next'
+import { ApolloProvider } from '@apollo/client'
 import type { AppProps } from 'next/app'
 import React from 'react'
-// import { useRouter } from 'next/router'
-// import getLayout from '../layouts'
-// import { DefaultLayout } from '../layouts/DefaultLayout'
+import client from '../apollo'
+import Provider from '../src/Provider'
 import '../styles/globals.scss'
 import { Children } from '../types/Children'
+
+
 
 
 type ComponentWithPageLayout = AppProps & {
@@ -15,18 +16,16 @@ type ComponentWithPageLayout = AppProps & {
 }
 
 function MyApp({ Component, pageProps }: ComponentWithPageLayout) {
-  // const router = useRouter()
-  // console.log(1)
-  return <> {
-    Component.Layout ?
-      <Component.Layout>
-        <Component {...pageProps} />
-      </Component.Layout>
-      : <Component {...pageProps} />
-  }
-  </>
-
-
+  return <ApolloProvider client={client}>
+    <Provider>
+      {Component.Layout ?
+        <Component.Layout>
+          <Component {...pageProps} />
+        </Component.Layout>
+        : <Component {...pageProps} />
+      }
+    </Provider>
+  </ApolloProvider>
 }
 
 export default MyApp

@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import Image from 'next/image'
-import { useState } from 'react'
+import { MeDocument, MeQuery, useLogoutMutation, useMeQuery } from '../../src/generated/graphql'
 import { Button } from '../Lib/Button'
 import styled from './Navbar.module.scss'
 
@@ -12,9 +12,24 @@ type Props = {
 
 const Navbar = ({ }: Props) => {
 
-  const [loading, setLoading] = useState(false)
-  const click = () => {
-    setLoading(!loading)
+  const { data } = useMeQuery()
+  const [dataLogout, { loading: loadingLogout }] = useLogoutMutation()
+
+  const onLogout = async () => {
+    await dataLogout({
+      update(cache, data) {
+        if (data.data) {
+          cache.writeQuery<MeQuery>({ query: MeDocument, data: { me: null } })
+          cache.modify({
+            fields: {
+              users() {
+                return []
+              }
+            }
+          })
+        }
+      }
+    })
   }
 
   return (
@@ -30,9 +45,18 @@ const Navbar = ({ }: Props) => {
         <Button icon='search' />
       </div>
       <div className={cx('register')}>
-        <Button loading={loading} icon="login" text="login" handle={click} />
-        <Button loading={loading} icon="logout" text="logout" handle={click} />
+        {data?.me?.id ? <>
+          <span>{data.me.email}</span>
+          <Button handle={onLogout} loading={loadingLogout} icon="logout" text="logout" />
+
+        </> :
+          <>
+            <Button link='/login' icon="login" text="Đăng nhập" />
+            <Button link="/register" icon="person_add" text="Đăng ký" />
+          </>}
+
       </div>
+
     </div>
   )
 }

@@ -1,0 +1,4 @@
+fragment fieldErrorInfo on FieldErrorUser {
+  name
+  mess
+}

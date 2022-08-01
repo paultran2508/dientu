@@ -9,20 +9,8 @@ import styled from './DefaultLayout.module.scss'
 
 const cx = classNames.bind(styled)
 
-// const pathAll = [
-//   '/product',
-//   '/news',
-//   '/profile',
-//   '/',
-// ]
-
-
 const DefaultLayout = ({ children }: Children) => {
-  // const route = useRouter()
-
-  // console.log(11)
   return (
-
     <div data-theme="dark" id="theme-root" className={cx('wrapper')}>
       <div className={cx('navbar')}><Navbar /></div>
       <div className={cx('sidebar')}><Sidebar /></div>

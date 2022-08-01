@@ -1,0 +1,18 @@
+.wrapper {
+  background-color: var(--bg-2);
+  border-radius: 12px;
+  hr {
+    border: 1px solid rgba($color: white, $alpha: 0.5);
+    margin: 1rem 0;
+  }
+  .ctn-product {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .filter {
+    display: flex;
+    gap: 1rem;
+  }
+}

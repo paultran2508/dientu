@@ -1,38 +1,43 @@
-.wrapper{
-  border-bottom: 1px solid  rgba($color: var(--rgb-primary-2), $alpha: .8) ;
+.wrapper {
+  border-bottom: 1px solid rgba($color: var(--rgb-primary-2), $alpha: 0.8);
   height: 100%;
   display: flex;
   font-size: 1.6rem;
   justify-content: space-between;
   align-items: center;
-  .logo{
+  .logo {
     display: flex;
     align-items: center;
-    .img{
+    .img {
       width: 3rem;
-      margin-right: .5rem;
+      margin-right: 0.5rem;
     }
   }
-  .search{
+  .search {
     width: 300px;
     display: flex;
-    border-radius: 10px ;
+    border-radius: 10px;
     overflow: hidden;
     background-color: var(--bg-3);
     border: 1px solid transparent;
-    input{
+    input {
       background-color: transparent;
       flex: 1;
     }
-    &:focus-within{
+    &:focus-within {
       border: 1px solid var(--primary-1);
     }
   }
-  .register{
+  .register {
     display: flex;
-    width: 300px;
+    // border: 1px solid;
+    width: 400px;
     justify-content: flex-end;
-  
+    button {
+      // margin-left: 0.5rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-left: 0.5rem;
+    }
   }
-  
 }

@@ -1,3 +1,3 @@
-import News from "./News";
+import News from "../../components/news";
 
 export default News

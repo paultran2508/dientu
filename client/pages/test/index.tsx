@@ -1,3 +1,3 @@
-import Test from "./Test";
+import Test from "../../components/Test";
 
 export default Test

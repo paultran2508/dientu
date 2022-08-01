@@ -1,37 +1,56 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-input{
+input {
   color: inherit;
   border: none;
   background-color: transparent;
   outline: none;
   font-size: 1rem;
-  padding: .5rem;
+  padding: 0.5rem;
   background-color: var(--bg-3);
 }
-a{
-  display: inline-block;
+a {
+  // display: inline-block;
   text-decoration: none;
+  color: var(--primary-2);
+  &:hover {
+    color: var(--primary-1);
+  }
+}
+
+button {
+  padding: 0;
+  margin: 0;
+  border: none;
+  color: inherit;
+  background-color: inherit;
+  outline: unset;
+  display: flex;
+  cursor: pointer;
 }
 
 ul {
   list-style: none;
-  li{
+  li {
     cursor: pointer;
-    padding: .5rem;
-    &:hover{
+    padding: 0.5rem;
+    &:hover {
       background-color: var(--bg-hv);
     }
-   
   }
 }
-p, span{
+p,
+span {
   font-size: inherit;
+  display: flex;
 }
 .material-icons {
   font-size: inherit;
+}
+sub {
+  font-size: 0.5rem;
 }

@@ -4,6 +4,6 @@ export const createToken = (user: User) => {
   return sign(
     { userId: user.id },
     process.env.SECRET_TOKEN as Secret,
-    { expiresIn: '15m' }
+    { expiresIn: '30d' }
   )
 }
