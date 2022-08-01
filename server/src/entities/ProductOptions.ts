@@ -1,8 +1,8 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Images } from './Images';
+import { Prices } from './Prices';
 import { Products } from './Product';
-
 
 
 @ObjectType()
@@ -29,5 +29,8 @@ export class ProductOptions extends BaseEntity {
   @ManyToOne(() => Products, (product) => product.options)
   product: Products
 
+  @Field(_type => [Prices])
+  @OneToMany(() => Prices, price => price.option)
+  prices: Prices[]
 
 }

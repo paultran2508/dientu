@@ -1,5 +1,6 @@
 import { Field } from "type-graphql";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Categories } from "./Categories";
 import { ProductAttributes } from "./ProductAttributes";
 
 @Entity()
@@ -16,4 +17,8 @@ export abstract class ProductValues {
   @ManyToOne(() => ProductAttributes, attr => attr.values)
   attribute: ProductAttributes
 
+  @Field(_type => Categories)
+  @OneToOne(() => Categories)
+  @JoinColumn()
+  category: Categories
 }

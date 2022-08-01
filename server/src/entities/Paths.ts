@@ -1,6 +1,5 @@
 import { Field } from "type-graphql";
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Products } from "./Product";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export abstract class Paths {
@@ -11,9 +10,5 @@ export abstract class Paths {
   @Field()
   @Column({ unique: true })
   url: string
-
-  @Field(_type => Products)
-  @OneToOne(() => Products, (product) => product.path)
-  product: Products
 
 }
