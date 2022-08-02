@@ -1,4 +1,4 @@
-import { Field } from "type-graphql";
+import { Field, ObjectType, registerEnumType } from "type-graphql";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export enum ImageType {
@@ -7,6 +7,7 @@ export enum ImageType {
   GIF = 'gif'
 }
 
+
 export enum ImageOf {
   PRODUCT = 'product',
   NEWS = 'news',
@@ -14,6 +15,11 @@ export enum ImageOf {
   ICON = 'icon'
 }
 
+registerEnumType(ImageOf, {
+  name: 'ImageOf'
+})
+
+@ObjectType()
 @Entity()
 export abstract class Images {
   @Field()
@@ -31,5 +37,6 @@ export abstract class Images {
   @Field()
   @Column({ type: 'enum', enum: ImageType, default: ImageType.JPG })
   type!: ImageType
+
 
 }

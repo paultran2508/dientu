@@ -1,7 +1,8 @@
-import { Field } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ProductOptions } from "./ProductOptions";
 
+@ObjectType()
 @Entity()
 export class Prices {
   @Field()
