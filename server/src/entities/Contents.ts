@@ -6,7 +6,7 @@ import { TypeCategories } from "./types/TypeCategories";
 @Entity()
 export class Contents {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: string
 
   @Field()

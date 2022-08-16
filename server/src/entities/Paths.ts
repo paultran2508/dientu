@@ -1,12 +1,13 @@
-import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Field, ID, ObjectType } from "type-graphql";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
 @Entity()
-export abstract class Paths {
-  @Field()
-  @PrimaryGeneratedColumn()
-  id: number
+export class Paths extends BaseEntity {
+  @Field(_type => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
+
 
   @Field()
   @Column({ unique: true })

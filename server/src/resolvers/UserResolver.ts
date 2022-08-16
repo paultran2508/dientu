@@ -5,7 +5,7 @@ import { createToken } from './../utils/auth';
 import { LoginInput } from './../types/inputs/LoginInput';
 import { RegisterInput } from './../types/inputs/RegisterInput';
 import { UserMutationResponse } from './../types/mutations/UserMutationResponse';
-import { User } from './../entities/User';
+import { Users } from '../entities/Users';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import argon2 from 'argon2';
 // import { Theme } from 'src/entities/types/Theme';
@@ -13,19 +13,19 @@ import argon2 from 'argon2';
 @Resolver()
 export class UserResolver {
 
-  @Query(_return => [User])
+  @Query(_return => [Users])
   @UseMiddleware(checkAuth)
-  async users(): Promise<User[]> {
-    return await User.find()
+  async users(): Promise<Users[]> {
+    return await Users.find()
   }
 
-  @Query(_return => User, { nullable: true })
+  @Query(_return => Users, { nullable: true })
   @UseMiddleware(checkAuth)
   async me(
     @Ctx() { user }: Context
-  ): Promise<User | null> {
+  ): Promise<Users | null> {
     try {
-      const existingUser = await User.findOneBy({ id: user.userId })
+      const existingUser = await Users.findOneBy({ id: user.userId })
       console.log(1)
       return existingUser
     } catch (error) {
@@ -47,11 +47,11 @@ export class UserResolver {
         success: false,
         fieldError: [{
           name: 'password',
-          mess: "password không được để rỗng"
+          message: "password không được để rỗng"
         },
         {
           name: 'email',
-          mess: "email không được để rỗng"
+          message: "email không được để rỗng"
         }]
       }
     }
@@ -65,7 +65,7 @@ export class UserResolver {
     }
 
 
-    const existingUser = await User.findOneBy({ email })
+    const existingUser = await Users.findOneBy({ email })
     if (existingUser) {
       return {
         code: 400,
@@ -76,7 +76,7 @@ export class UserResolver {
 
     const hashPassword = await argon2.hash(password)
 
-    const newUser = User.create({
+    const newUser = Users.create({
       email, password: hashPassword,
       name: email.split('@')[0],
       theme: theme === Theme.DARK ? Theme.DARK : Theme.LIGHT
@@ -99,7 +99,7 @@ export class UserResolver {
     try {
 
       const { email, password } = loginInput
-      const existingUser = await User.findOneBy({ email })
+      const existingUser = await Users.findOneBy({ email })
 
       /* 
         Error 
@@ -112,11 +112,11 @@ export class UserResolver {
           success: false,
           fieldError: [{
             name: 'password',
-            mess: "password không được để rỗng"
+            message: "password không được để rỗng"
           },
           {
             name: 'email',
-            mess: "email không được để rỗng"
+            message: "email không được để rỗng"
           }]
         }
       }
@@ -130,7 +130,7 @@ export class UserResolver {
         success: false,
         fieldError: [{
           name: 'email',
-          mess: "email không được để rỗng"
+          message: "email không được để rỗng"
         }]
       }
 
@@ -141,7 +141,7 @@ export class UserResolver {
         fieldError: [
           {
             name: 'email',
-            mess: "email chưa đăng ký"
+            message: "email chưa đăng ký"
           }
         ]
       }
@@ -153,7 +153,7 @@ export class UserResolver {
         success: false,
         fieldError: [{
           name: 'password',
-          mess: "Password không được để rỗng"
+          message: "Password không được để rỗng"
         }]
       }
 
@@ -164,7 +164,7 @@ export class UserResolver {
         success: false,
         fieldError: [{
           name: "password",
-          mess: "Password incorrect"
+          message: "Password incorrect"
         }]
       }
       /* Success */

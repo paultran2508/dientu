@@ -1,4 +1,4 @@
-import { User } from './../entities/User';
+import { Users } from '../entities/Users';
 import { Context } from './../types/Context';
 import { checkAuth } from './../middleware/checkAuth';
 import { Ctx, Query, Resolver, UseMiddleware } from "type-graphql"
@@ -11,7 +11,7 @@ export class Hello {
     @Ctx()
     { user }: Context
   ): Promise<string> {
-    const existingUser = await User.findOneBy({ id: user.userId })
+    const existingUser = await Users.findOneBy({ id: user.userId, })
     console.log(existingUser)
     return `hello ${existingUser?.name} login`
   }

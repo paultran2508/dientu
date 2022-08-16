@@ -6,10 +6,10 @@ import { Theme } from './types/Theme';
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class Users extends BaseEntity {
   @Field(_type => ID)
-  @PrimaryGeneratedColumn()
-  id: number
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
 
   @Field()
   @Column({ unique: true })

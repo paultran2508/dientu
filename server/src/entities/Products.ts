@@ -1,21 +1,22 @@
-import { ProductOptions } from './ProductOptions';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Paths } from './Paths';
+import { Brands } from './Brands';
 import { Categories } from './Categories';
+import { Paths } from './Paths';
+import { ProductOptions } from './ProductOptions';
 
-@ObjectType()
 @Entity()
+@ObjectType()
 export class Products extends BaseEntity {
   @Field(_type => ID)
-  @PrimaryGeneratedColumn()
-  id!: number
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
 
   @Field()
   @Column({ unique: true })
   name: string
 
-  @Field()
+  @Field(_type => Date)
   @CreateDateColumn({ type: 'date' })
   createAt: Date
 
@@ -31,4 +32,9 @@ export class Products extends BaseEntity {
   @Field(_type => Categories)
   @ManyToOne(() => Categories, category => category.products)
   category: Categories
+
+  @Field(_type => Brands)
+  @OneToOne(() => Brands)
+  @JoinColumn()
+  brand: Brands
 }

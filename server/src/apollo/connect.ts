@@ -7,8 +7,9 @@ import { Express } from 'express'
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core/dist/plugin/drainHttpServer';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import resolvers from '../resolvers'
+import { DataSource } from 'typeorm';
 
-export const Apollo = async (exp: Express, variable: Variable) => {
+export const Apollo = async (exp: Express, variable: Variable, dataSource: DataSource) => {
   const port = variable.port ?? 5000
 
   const httpServer = createServer(exp)
@@ -22,7 +23,7 @@ export const Apollo = async (exp: Express, variable: Variable) => {
       ApolloServerPluginDrainHttpServer({ httpServer }),
       ApolloServerPluginLandingPageGraphQLPlayground
     ],
-    context: ({ req, res }: Context) => ({ req, res })
+    context: ({ req, res }: Context) => ({ req, res, dataSource })
   })
   await main.start()
   main.applyMiddleware({

@@ -10,20 +10,19 @@ interface DbVar {
 }
 
 export const AppConnectPostgres = async ({ username, password, host, database }: DbVar) => {
-  const main = new DataSource({
+  return new DataSource({
     type: 'postgres',
     host,
     port: 5432,
     username,
     password,
     database,
-    synchronize: true,
+    synchronize: false,
     logging: true,
     entities
-
     // subscribers: [],
     // migrations: [],
   })
-
-  return await main.initialize()
 }
+
+

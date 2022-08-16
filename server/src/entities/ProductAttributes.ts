@@ -1,12 +1,14 @@
-import { Field } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductValues } from "./ProductValues";
 
+
+@ObjectType()
 @Entity()
 export class ProductAttributes {
   @Field()
-  @PrimaryGeneratedColumn()
-  id!: number
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
 
   @Field()
   @Column()

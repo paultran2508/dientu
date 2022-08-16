@@ -1,13 +1,13 @@
 import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ProductOptions } from "./ProductOptions";
 
 @ObjectType()
 @Entity()
 export class Prices {
   @Field()
-  @PrimaryGeneratedColumn()
-  id!: number
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
 
   @Field()
   @Column({ nullable: false })
@@ -22,8 +22,8 @@ export class Prices {
   type: string
 
   @Field()
-  @Column({ type: 'date' })
-  date!: Date
+  @CreateDateColumn({ type: 'timestamptz' })
+  createAt!: Date
 
   @Field(_type => ProductOptions)
   @ManyToOne(() => ProductOptions, option => option.prices)

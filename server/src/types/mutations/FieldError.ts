@@ -1,10 +1,13 @@
 import { Field, ObjectType } from "type-graphql"
 
 @ObjectType()
-export class FieldErrorUser {
+export class FieldError {
   @Field()
   name: string
 
   @Field()
-  mess: string
+  message: string
+
+  @Field({ nullable: true })
+  code?: string
 }

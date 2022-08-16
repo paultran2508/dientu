@@ -7,18 +7,19 @@ export class App {
 
   constructor(public appInput: AppInput) { }
 
-  connects() {
+  async connects() {
 
     //Start Postgresql
-    AppConnectPostgres({
+    const sourceData = await AppConnectPostgres({
       username: this.appInput.env.DB_USERNAME as string,
       password: this.appInput.env.DB_PASSWORD as string,
       host: this.appInput.env.DB_HOST as string,
       database: this.appInput.env.DB_DATABASE as string,
     })
 
+    await sourceData.initialize()
     //Start Apollo
-    Apollo(this.appInput.express, { port: parseInt(this.appInput.env.PORT_GRAPHQL as string), secret: this.appInput.env.SECRET_TOKEN as string })
+    await Apollo(this.appInput.express, { port: parseInt(this.appInput.env.PORT_GRAPHQL as string), secret: this.appInput.env.SECRET_TOKEN as string }, sourceData)
   }
 
   startServer() {

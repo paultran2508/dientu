@@ -6,8 +6,8 @@ import { ProductAttributes } from "./ProductAttributes";
 @Entity()
 export abstract class ProductValues {
   @Field()
-  @PrimaryGeneratedColumn()
-  id!: number
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
 
   @Field()
   @Column()
