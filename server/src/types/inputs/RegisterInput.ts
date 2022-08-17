@@ -10,5 +10,8 @@ export class RegisterInput {
   password?: string
 
   @Field({ nullable: true })
+  rePassword?: string
+
+  @Field({ nullable: true })
   theme?: Theme
 }

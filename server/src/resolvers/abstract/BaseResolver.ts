@@ -1,4 +1,4 @@
-import { Mutation } from "type-graphql";
+import { Resolver } from "type-graphql";
 import { BaseEntity, DataSource, DeepPartial } from "typeorm";
 import { FieldError } from '../../types/mutations/FieldError';
 import { IMutationResponse } from '../../types/mutations/MutationResponse';
@@ -20,25 +20,16 @@ export type TypeEntityExtension<T, K extends keyof T> = {
   nameField: K
 }
 
+export function createBaseResolver<T>({ entity }: TypeBaseResolver<T>) {
 
-// type FieldERR = {
-//   name: string
-//   message: string
-// }
-
-export function createBaseResolver<T>({ entity, name }: TypeBaseResolver<T>) {
-
-
-  // @Resolver(_of => entity, { isAbstract: false })
+  @Resolver(_of => entity, { isAbstract: true })
   abstract class BaseResolver {
 
-    // public getErrorQuery: QueryFailedError
+    // private fieldErrors: FieldError[] = []
     public source: DataSource
     public Entity: T = new entity()
     public fieldEntity: DeepPartial<T>;
     abstract entityExtensions: TypeEntityExtension<T, keyof T>[]
-
-
 
     _return<R extends {}>(arg: R): R & IMutationResponse {
       return {
@@ -49,24 +40,20 @@ export function createBaseResolver<T>({ entity, name }: TypeBaseResolver<T>) {
       }
     }
 
-    catchQuery<C extends {}>(error: any, result: C): C & IMutationResponse & { fieldErrors: FieldError[] } {
+    catchQuery(error: any): IMutationResponse & { fieldErrors: FieldError[] } {
       const resultError = new HandleErrorResponse(error)
-      console.log("base", resultError.getFieldError.name + "het")
-      // const setResult = result === undefined ? {} : result
-      // const setResult: R & IMutationResponse = result === undefined ? { code: 100, message: "error base", success: false } : { code: 100, message: "error base", success: false, ...result }
+      // this.fieldErrors.push(resultError.getFieldError)
+      console.log(resultError.driverError.fieldErrors)
       return {
-        code: 100, message: "error base", success: false,
-        fieldErrors: [resultError.getFieldError],
-        ...result
+        code: 100,
+        message: "error base",
+        success: false,
+        fieldErrors: resultError.driverError.fieldErrors ? resultError.driverError.fieldErrors : [resultError.getFieldError],
+
+
       }
     }
 
-    @Mutation(_type => entity, { name: `addBase${name}` })
-    async add(
-      // @Ctx() { dataSource }: Context
-    ) {
-
-    }
   }
   return BaseResolver
 }

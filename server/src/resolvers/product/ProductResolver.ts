@@ -1,24 +1,23 @@
-import { Condition, ProductOptions } from './../../entities/ProductOptions';
-import { Prices } from './../../entities/Prices';
-import { ProductOptionMutationResponse } from './../../types/mutations/ProductOptionMutationResponse';
-import { ProductOptionInput } from './../../types/inputs/ProductOptionInput';
-import { BrandMutationResponse } from './../../types/mutations/BrandMutationResponse';
-import { CategoryMutationResponse } from './../../types/mutations/CategoryMutationResponse';
-import { ImgOf, Imgs, ImgType } from './../../entities/Imgs';
-import { TypeCategories } from './../../entities/types/TypeCategories';
-import { checkAuth } from './../../middleware/checkAuth';
-import { CategoryInput } from './../../types/inputs/CategoryInput';
-import { CustomError, HandleErrorResponse } from './../exceptions/HandleErrorResult';
-import { Arg, Ctx, Mutation, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
 import { Brands } from '../../entities/Brands';
 import { Categories } from '../../entities/Categories';
 import { Paths } from '../../entities/Paths';
 import { Products } from '../../entities/Products';
 import { Context } from '../../types/Context';
-import { ProductInput } from '../../types/inputs/ProductInput';
 import { BrandInput } from '../../types/inputs/BrandInput';
+import { ProductInput } from '../../types/inputs/ProductInput';
 import { ProductMutationResponse } from '../../types/mutations/ProductMutationResponse';
 import { createBaseResolver, TypeEntityExtension } from '../abstract/BaseResolver';
+import { ImgOf, Imgs, ImgType } from './../../entities/Imgs';
+import { Prices } from './../../entities/Prices';
+import { Condition, ProductOptions } from './../../entities/ProductOptions';
+import { TypeCategories } from './../../entities/types/TypeCategories';
+import { CategoryInput } from './../../types/inputs/CategoryInput';
+import { ProductOptionInput } from './../../types/inputs/ProductOptionInput';
+import { BrandMutationResponse } from './../../types/mutations/BrandMutationResponse';
+import { CategoryMutationResponse } from './../../types/mutations/CategoryMutationResponse';
+import { ProductOptionMutationResponse } from './../../types/mutations/ProductOptionMutationResponse';
+import { CustomError, HandleErrorResponse } from './../exceptions/HandleErrorResult';
 
 export const ProductsBaseResolver = createBaseResolver({ name: 'product', entity: Products })
 
@@ -45,7 +44,7 @@ export class ProductResolver extends ProductsBaseResolver {
         return await source.save(Products, { category: Category, name, path: Path, brand: Brand })
       })
       return this._return({ products: [product] })
-    } catch (error) { return this.catchQuery(error, {}) }
+    } catch (error) { return this.catchQuery(error) }
   }
 
   @Mutation(_return => CategoryMutationResponse)
@@ -60,7 +59,7 @@ export class ProductResolver extends ProductsBaseResolver {
         return await source.save(Categories, { img: Img, name: category, type: TypeCategories.PRODUCT })
       })
       return this._return({ categories: [Category] })
-    } catch (error) { return this.catchQuery(error, {}) }
+    } catch (error) { return this.catchQuery(error) }
   }
 
   @Mutation(_return => BrandMutationResponse)
@@ -75,7 +74,7 @@ export class ProductResolver extends ProductsBaseResolver {
         return await source.save(Brands, { name: brand, img: Img })
       })
       return this._return({ brands: [Category] })
-    } catch (error) { return this.catchQuery(error, {}) }
+    } catch (error) { return this.catchQuery(error) }
   }
 
   @Mutation(_return => ProductOptionMutationResponse)
@@ -88,18 +87,17 @@ export class ProductResolver extends ProductsBaseResolver {
       const productOption = await dataSource.manager.transaction(async source => {
         let addImgs: Imgs[] = []
         const addProduct = await source.findOneBy(Products, { id: productId })
-        if (!addProduct) throw new HandleErrorResponse<CustomError>({ code: "404", detail: "product" })
-
+        if (!addProduct) throw new HandleErrorResponse<CustomError>({ code: "404", detail: "productId", table: "productOption" })
         for (const img of imgs) {
           addImgs.push(await source.save(Imgs, { Of: ImgOf.PRODUCT, type: ImgType.JPG, path: img }))
         }
         const addPrice = await source.save(Prices, { note: price.note, price: price.price, type: "default" })
         return await source.save(ProductOptions, { imgs: addImgs, name, product: addProduct, condition: Condition.STOKING, prices: [addPrice] })
-
       })
       return this._return({ productOption: [productOption] })
     } catch (error) {
-      return this.catchQuery(error, {})
+      console.log("dau", error, "cuoi")
+      return this.catchQuery(error)
     }
   }
 

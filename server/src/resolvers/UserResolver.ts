@@ -1,17 +1,23 @@
+import argon2 from 'argon2';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Users } from '../entities/Users';
+import { Theme } from './../entities/types/Theme';
 import { checkAuth } from './../middleware/checkAuth';
 import { Context } from './../types/Context';
-import { Theme } from './../entities/types/Theme';
-import { createToken } from './../utils/auth';
 import { LoginInput } from './../types/inputs/LoginInput';
 import { RegisterInput } from './../types/inputs/RegisterInput';
+import { FieldError } from './../types/mutations/FieldError';
 import { UserMutationResponse } from './../types/mutations/UserMutationResponse';
-import { Users } from '../entities/Users';
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
-import argon2 from 'argon2';
+import { createToken } from './../utils/auth';
+import { createBaseResolver, TypeEntityExtension } from './abstract/BaseResolver';
+import { CustomError, HandleErrorResponse } from './exceptions/HandleErrorResult';
 // import { Theme } from 'src/entities/types/Theme';
+const UserBaseResolver = createBaseResolver<Users>({ entity: Users, name: "users" })
 
 @Resolver()
-export class UserResolver {
+export class UserResolver extends UserBaseResolver {
+
+  entityExtensions: TypeEntityExtension<Users, keyof Users>[];
 
   @Query(_return => [Users])
   @UseMiddleware(checkAuth)
@@ -35,59 +41,24 @@ export class UserResolver {
 
   @Mutation(_return => UserMutationResponse)
   async register(
-    @Arg('registerInput') registerInput: RegisterInput
+    @Arg('registerInput') registerInput: RegisterInput,
+    @Ctx() { dataSource }: Context
   ): Promise<UserMutationResponse> {
-    const { email, password, theme } = registerInput
-    // console.log(registerInput)
+    try {
+      const { email, password, rePassword } = registerInput
+      let setErrors: FieldError[] = []
+      const user = await dataSource.transaction(async source => {
+        if (!password) { setErrors.push({ name: "password", message: "password không được để trống " }) }
+        if (!email) { setErrors.push({ name: "email", message: "email không được để trống " }) }
+        if (password !== rePassword) { setErrors.push({ name: "rePassword", message: "password không trùng nhau " }) }
+        const exitingEmail = await source.findOneBy(Users, { email })
+        if (exitingEmail) setErrors.push({ name: "email", message: "email đã tồn tại" })
+        if (setErrors.length > 0) throw new HandleErrorResponse<CustomError>({ detail: "a", code: "404", name: "sss", message: "s", fieldErrors: setErrors })
+        return await source.create(Users, { email, password: await argon2.hash(password as string), theme: Theme.DARK, name: email?.substring(email.indexOf("@"), -1) }).save()
+      })
+      return this._return({ user })
+    } catch (err) { return this.catchQuery(err) }
 
-    if (!email || !password) {
-      return {
-        code: 400,
-        message: 'Not found email or password ',
-        success: false,
-        fieldError: [{
-          name: 'password',
-          message: "password không được để rỗng"
-        },
-        {
-          name: 'email',
-          message: "email không được để rỗng"
-        }]
-      }
-    }
-
-    if (!password) {
-      return {
-        code: 400,
-        message: 'Not found Password ',
-        success: false
-      }
-    }
-
-
-    const existingUser = await Users.findOneBy({ email })
-    if (existingUser) {
-      return {
-        code: 400,
-        message: 'Duplicated email',
-        success: false
-      }
-    }
-
-    const hashPassword = await argon2.hash(password)
-
-    const newUser = Users.create({
-      email, password: hashPassword,
-      name: email.split('@')[0],
-      theme: theme === Theme.DARK ? Theme.DARK : Theme.LIGHT
-    })
-    return {
-      code: 200,
-      success: true,
-      message: 'Register account success',
-      user: await newUser.save()
-
-    }
   }
 
   @Mutation(_return => UserMutationResponse)
@@ -110,7 +81,7 @@ export class UserResolver {
           code: 400,
           message: 'Not found email or password11 ',
           success: false,
-          fieldError: [{
+          fieldErrors: [{
             name: 'password',
             message: "password không được để rỗng"
           },
@@ -128,7 +99,7 @@ export class UserResolver {
         code: 400,
         message: 'Email not found',
         success: false,
-        fieldError: [{
+        fieldErrors: [{
           name: 'email',
           message: "email không được để rỗng"
         }]
@@ -138,7 +109,7 @@ export class UserResolver {
         code: 400,
         message: 'Email unregistered',
         success: false,
-        fieldError: [
+        fieldErrors: [
           {
             name: 'email',
             message: "email chưa đăng ký"
@@ -151,7 +122,7 @@ export class UserResolver {
         code: 400,
         message: 'Password unregistered',
         success: false,
-        fieldError: [{
+        fieldErrors: [{
           name: 'password',
           message: "Password không được để rỗng"
         }]
@@ -162,7 +133,7 @@ export class UserResolver {
         code: 400,
         message: 'Password incorrect',
         success: false,
-        fieldError: [{
+        fieldErrors: [{
           name: "password",
           message: "Password incorrect"
         }]

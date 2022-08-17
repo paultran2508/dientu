@@ -5,6 +5,8 @@ export type CustomError = {
   code: string,
   detail: string,
   message?: string,
+  table?: string,
+  fieldErrors?: FieldError[]
 }
 
 type Error<T> = T extends CustomError ? CustomError & Partial<QueryFailedError> : QueryFailedError
@@ -12,11 +14,7 @@ type Error<T> = T extends CustomError ? CustomError & Partial<QueryFailedError> 
 export class HandleErrorResponse<T> extends QueryFailedError {
 
   driverError: CustomError;
-  getFieldError: FieldError = {
-    message: this.message,
-    name: this.name,
-    code: this.driverError.code
-  }
+  getFieldError: FieldError
 
   public setErrors: QueryFailedError & Record<"driverError", CustomError> = {
     driverError: { code: "404", detail: "test", message: "khong tim thấy" },
@@ -33,20 +31,28 @@ export class HandleErrorResponse<T> extends QueryFailedError {
   }
 
   unique() {
-    let name: string = this.driverError.detail as string
-    const number = name.indexOf("\"") + 1
-    name = this.driverError.detail.substring(number, this.driverError.detail.indexOf("\"", number))
+    let name: string = this.driverError.detail
+    if (this.driverError.table) {
+      const number = name.indexOf("\(") + 1
+      name = this.driverError.detail.substring(number, this.driverError.detail.indexOf("\)"))
+    } else {
+      const number = name.indexOf("\"") + 1
+      name = this.driverError.detail.substring(number, this.driverError.detail.indexOf("\"", number))
+    }
+
     this.getFieldError = {
-      message: `trùng ${name}`,
-      name,
+      message: `trùng ${name}` + (this.driverError.table && ` of table ${this.driverError.table}`),
+      name: this.driverError.detail,
       code: this.driverError.code
     }
+
+    // this.getFieldError = 
   }
 
   notfound() {
     this.getFieldError = {
       message: `khong tim thay ${this.driverError.detail}`,
-      name: this.name,
+      name: this.driverError.detail,
       code: this.driverError.code
     }
   }
