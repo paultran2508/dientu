@@ -1,3 +1,4 @@
+import { Pagination } from './../Pagination';
 import { Categories } from './../../entities/Categories';
 import { Field, ObjectType } from 'type-graphql';
 import { IMutationResponse } from './MutationResponse';
@@ -13,6 +14,9 @@ export class CategoryMutationResponse implements IMutationResponse {
 
   @Field(_type => [Categories], { nullable: true })
   categories?: Categories[]
+
+  @Field(_type => Pagination, { nullable: true })
+  pagination?: Pagination
 
 
 }

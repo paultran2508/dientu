@@ -2,7 +2,7 @@ import { Rating } from "@mui/material"
 import classNames from "classnames/bind"
 import Image from "next/image"
 import { Button } from "../../components/Lib/Button"
-import style from './ProductDetail.module.scss'
+import style from './product-detail.module.scss'
 import CommentIcon from '@mui/icons-material/Comment';
 
 type Props = {

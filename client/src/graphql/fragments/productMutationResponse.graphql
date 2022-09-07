@@ -1,0 +1,15 @@
+fragment productMutationResponse on ProductMutationResponse {
+  code
+  message
+  success
+  products {
+    ...productInfo
+  }
+  categoryId
+  fieldErrors {
+    ...fieldErrorInfo
+  }
+  pagination {
+    ...pagination
+  }
+}

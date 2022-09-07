@@ -1,0 +1,4 @@
+fragment pathInfo on Paths {
+  name
+  id
+}

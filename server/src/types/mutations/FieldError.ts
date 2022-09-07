@@ -5,8 +5,8 @@ export class FieldError {
   @Field()
   name: string
 
-  @Field()
-  message: string
+  @Field({ nullable: true })
+  message?: string
 
   @Field({ nullable: true })
   code?: string

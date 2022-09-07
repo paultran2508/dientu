@@ -16,16 +16,20 @@ export class Products extends BaseEntity {
   @Column({ unique: true })
   name: string
 
+  @Field()
+  @Column()
+  categoryId: string
+
   @Field(_type => Date)
-  @CreateDateColumn({ type: 'date' })
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createAt: Date
 
   @Field(_type => [ProductOptions])
-  @OneToMany(() => ProductOptions, option => option.product)
+  @OneToMany(() => ProductOptions, option => option.product, { cascade: true })
   options: ProductOptions[]
 
   @Field(_type => Paths)
-  @OneToOne(() => Paths)
+  @OneToOne(() => Paths, path => path.product, { onDelete: 'CASCADE', cascade: true })
   @JoinColumn()
   path: Paths
 
@@ -34,7 +38,6 @@ export class Products extends BaseEntity {
   category: Categories
 
   @Field(_type => Brands)
-  @OneToOne(() => Brands)
-  @JoinColumn()
+  @ManyToOne(() => Brands, brand => brand.products)
   brand: Brands
 }

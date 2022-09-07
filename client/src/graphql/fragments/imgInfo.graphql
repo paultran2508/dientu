@@ -1,0 +1,4 @@
+fragment imgInfo on Imgs {
+  name
+  type
+}

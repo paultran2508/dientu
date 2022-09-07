@@ -1,0 +1,13 @@
+fragment productOptionInfo on ProductOptions {
+  id
+  name
+  prices {
+    ...productPriceInfo
+  }
+  values {
+    ...productValueInfo
+  }
+  imgs {
+    ...imgInfo
+  }
+}

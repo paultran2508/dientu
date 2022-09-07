@@ -1,24 +1,20 @@
-import { Field } from "type-graphql";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Categories } from "./Categories";
+import { Field, ObjectType } from "type-graphql";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ProductAttributes } from "./ProductAttributes";
 
+@ObjectType()
 @Entity()
-export abstract class ProductValues {
+export class ProductValues extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
   @Field()
   @Column()
-  value!: string
+  name!: string
 
   @Field(_type => ProductAttributes)
   @ManyToOne(() => ProductAttributes, attr => attr.values)
   attribute: ProductAttributes
 
-  @Field(_type => Categories)
-  @OneToOne(() => Categories)
-  @JoinColumn()
-  category: Categories
 }

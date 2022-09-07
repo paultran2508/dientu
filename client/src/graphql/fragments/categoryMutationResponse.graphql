@@ -1,0 +1,11 @@
+fragment categoryMutationResponse on CategoryMutationResponse {
+  code
+  message
+  success
+  categories {
+    ...categoryInfo
+  }
+  pagination {
+    ...pagination
+  }
+}

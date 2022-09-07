@@ -1,0 +1,5 @@
+query Category($limit: Int, $cursor: DateTime) {
+  categories(cursor: $cursor, limit: $limit) {
+    ...categoryMutationResponse
+  }
+}

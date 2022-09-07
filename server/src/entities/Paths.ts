@@ -1,5 +1,6 @@
+import { Products } from './Products';
 import { Field, ID, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
 @Entity()
@@ -11,6 +12,10 @@ export class Paths extends BaseEntity {
 
   @Field()
   @Column({ unique: true })
-  url: string
+  name: string
+
+  @OneToOne(() => Products, product => product.path, { onDelete: "CASCADE", nullable: true })
+  product?: Products
+
 
 }

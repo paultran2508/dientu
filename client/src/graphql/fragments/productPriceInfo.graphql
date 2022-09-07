@@ -1,0 +1,8 @@
+fragment productPriceInfo on ProductPrices {
+  price
+  type
+  color {
+    name
+  }
+  note
+}

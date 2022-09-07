@@ -1,0 +1,17 @@
+fragment productInfo on Products {
+  name
+  id
+  createAt
+  brand {
+    name
+  }
+  options {
+    ...productOptionInfo
+  }
+  category {
+    name
+  }
+  path {
+    name
+  }
+}

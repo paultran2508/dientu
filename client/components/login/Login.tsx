@@ -32,19 +32,26 @@ const Login = ({ }: Props) => {
 
   const handleForm: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
+
     const res = await login({
       variables: { loginInput: values },
       update(cache, { data }) {
-        data?.login.code === 200 && cache.writeQuery<MeQuery>({
-          query: MeDocument,
-          data: { me: data.login.user }
-        })
+        // console.log(data?.login.code)
+        if (data?.login.code === 200 && data.login.user) {
+          // console.log(data?.login.code === 200)
+          // console.log(data.login.user)
+          cache.writeQuery<MeQuery>({
+            query: MeDocument,
+            data: { me: data.login.user }
+          })
+        }
 
       }
     })
-    if (res.data?.login.code != 200 && res.data?.login.fieldError) {
+    if (res.data?.login.code != 200 && res.data?.login.fieldErrors) {
+      // console.log(res.data?.login.fieldErrors)
 
-      setErrors(res.data?.login.fieldError)
+      setErrors(res.data?.login.fieldErrors)
 
     }
     if (res.data?.login.code === 200) {
@@ -75,8 +82,8 @@ const Login = ({ }: Props) => {
             <span>Login Google</span>
           </div>} />
         </div>
-        <Field handleValueFiled={handleValue} errMess={errors?.filter(err => err.name === 'email')[0]?.mess} value={values.email} name="email" placeholder='Nhập email' />
-        <Field handleValueFiled={handleValue} errMess={errors?.filter(err => err && err.name === 'password')[0]?.mess} value={values.password} name="password" placeholder='Nhập password' />
+        <Field handleValueFiled={handleValue} errMess={errors?.filter(err => err.name === 'email')[0]?.message} value={values.email} name="email" placeholder='Nhập email' />
+        <Field handleValueFiled={handleValue} errMess={errors?.filter(err => err && err.name === 'password')[0]?.message} value={values.password} name="password" placeholder='Nhập password' />
         <div className={cx('action')}>
           <Button loading={loading} submit text="Đăng nhập" />
           <Link href={'/register'} >đăng ký</Link>

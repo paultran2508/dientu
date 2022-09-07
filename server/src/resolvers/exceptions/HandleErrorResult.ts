@@ -9,12 +9,12 @@ export type CustomError = {
   fieldErrors?: FieldError[]
 }
 
-type Error<T> = T extends CustomError ? CustomError & Partial<QueryFailedError> : QueryFailedError
+// type Error<T> = T extends CustomError ? CustomError & Partial<QueryFailedError> : QueryFailedError | never
 
-export class HandleErrorResponse<T> extends QueryFailedError {
+export class HandleErrorResponse extends QueryFailedError {
 
   driverError: CustomError;
-  getFieldError: FieldError
+  getFieldErrors: FieldError[] = []
 
   public setErrors: QueryFailedError & Record<"driverError", CustomError> = {
     driverError: { code: "404", detail: "test", message: "khong tim thấy" },
@@ -24,10 +24,13 @@ export class HandleErrorResponse<T> extends QueryFailedError {
     query: "Select ..."
   }
 
-  constructor(error: Error<T>) {
-    super(error.query || "", error.parameters ?? [], error.driverError ?? error)
+  constructor(setErrors: FieldError[] = [], error: QueryFailedError | undefined = undefined) {
+    super(error?.query ?? "", error?.parameters ?? [], error?.driverError ?? error)
+    // console.log("dau", error?.driverError, setErrors, "cuoi")
     if (this.driverError.code === "23505") this.unique()
     if (this.driverError.code === "404") this.notfound()
+    if (setErrors.length > 0) this.getFieldErrors = setErrors
+    if (this.driverError.code === "22P02") this.uuid()
   }
 
   unique() {
@@ -39,22 +42,27 @@ export class HandleErrorResponse<T> extends QueryFailedError {
       const number = name.indexOf("\"") + 1
       name = this.driverError.detail.substring(number, this.driverError.detail.indexOf("\"", number))
     }
-
-    this.getFieldError = {
+    this.getFieldErrors.push({
       message: `trùng ${name}` + (this.driverError.table && ` of table ${this.driverError.table}`),
       name: this.driverError.detail,
       code: this.driverError.code
-    }
+    })
+  }
 
-    // this.getFieldError = 
+  uuid() {
+    this.getFieldErrors.push({
+      message: `Kiểu dữ liệu không đúng`,
+      name: "ID",
+      code: "22P02"
+    })
   }
 
   notfound() {
-    this.getFieldError = {
+    this.getFieldErrors.push({
       message: `khong tim thay ${this.driverError.detail}`,
       name: this.driverError.detail,
       code: this.driverError.code
-    }
+    })
   }
 
 }

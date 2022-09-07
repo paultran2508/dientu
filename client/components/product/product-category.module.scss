@@ -1,0 +1,22 @@
+.wrapper {
+  background-color: var(--bg-2);
+  border-radius: 12px;
+  padding: 1rem;
+
+  margin-bottom: 0.5rem;
+  h1 {
+    color: var(--primary-2);
+    margin-bottom: 1rem;
+  }
+  .product-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .add-categories {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    // text-align: center;
+  }
+}

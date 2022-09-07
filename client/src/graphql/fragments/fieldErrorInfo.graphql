@@ -1,4 +1,5 @@
-fragment fieldErrorInfo on FieldErrorUser {
+fragment fieldErrorInfo on FieldError {
   name
-  mess
+  message
+  code
 }

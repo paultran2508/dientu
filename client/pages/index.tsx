@@ -1,12 +1,14 @@
 // import type { NextPage } from 'next'
 import Head from 'next/head'
 import { DefaultLayout } from '../layouts/DefaultLayout'
-import { useUsersQuery } from '../src/generated/graphql'
+import { useMeQuery } from '../src/generated/graphql'
 
 const Home = () => {
 
-  const { data, loading, error } = useUsersQuery({})
-  // console.log(data?.users)
+  const { data, loading, error } = useMeQuery()
+  // console.log(data?.me, "index", networkStatus, error)
+  // console.log(data, "index")
+
   return (
     <>
       <Head>
@@ -18,7 +20,7 @@ const Home = () => {
         {error && <h3>{error.message}</h3>}
         {loading ? <div>loading ...</div> :
           <ul>
-            {data?.users?.map(user => <li key={user.id}>{user.email + "  ---id: " + user.id}</li>)}
+            <li> {data?.me?.email + "  ---id: " + data?.me?.id}</li>
           </ul>}
       </div>
     </>

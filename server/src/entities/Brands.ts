@@ -1,11 +1,12 @@
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Imgs } from "./Imgs";
+import { Products } from "./Products";
 
 @ObjectType()
 @Entity()
 export class Brands extends BaseEntity {
-  // @Field()
+  @Field()
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
@@ -17,4 +18,9 @@ export class Brands extends BaseEntity {
   @OneToOne(() => Imgs)
   @JoinColumn()
   img: Imgs
+
+  // @Field(_return => [Products])
+  @OneToMany(() => Products, product => product.brand)
+  products: Products[]
+
 }

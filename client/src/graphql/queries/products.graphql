@@ -1,0 +1,5 @@
+query Products($limit: Int, $cursor: DateTime, $categoryId: String!) {
+  productsByCategoryId(categoryId: $categoryId, cursor: $cursor, limit: $limit) {
+    ...productMutationResponse
+  }
+}

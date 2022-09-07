@@ -1,0 +1,8 @@
+fragment categoryInfo on Categories {
+  name
+  type
+  id
+  img {
+    ...imgInfo
+  }
+}

@@ -2,7 +2,7 @@ import { TypeCategories } from '../../entities/types/TypeCategories';
 import { Field, InputType } from "type-graphql";
 
 @InputType()
-export class CategoryInput {
+export class AddCategoryInput {
   @Field()
   category: string
 

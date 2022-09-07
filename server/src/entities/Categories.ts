@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Imgs } from "./Imgs";
 import { News } from "./News";
 import { Products } from "./Products";
@@ -13,7 +13,7 @@ export class Categories extends BaseEntity {
   id!: string
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   name!: string
 
   @Field(_type => TypeCategories)
@@ -21,10 +21,13 @@ export class Categories extends BaseEntity {
   type!: TypeCategories
 
   @Field(_type => Imgs)
-  @OneToOne(() => Imgs)
+  @OneToOne(() => Imgs, img => img.category)
   @JoinColumn()
   img: Imgs
 
+  @Field(_type => Date)
+  @CreateDateColumn({ type: "timestamptz" })
+  createAt: Date
 
   @Field(_type => [Products])
   @OneToMany(() => Products, product => product.category)

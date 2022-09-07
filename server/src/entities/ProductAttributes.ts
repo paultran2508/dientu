@@ -11,8 +11,8 @@ export class ProductAttributes {
   id!: string
 
   @Field()
-  @Column()
-  attribute!: string
+  @Column({ unique: true, nullable: false })
+  name!: string
 
   @Field(_type => [ProductValues])
   @OneToMany(() => ProductValues, value => value.attribute)

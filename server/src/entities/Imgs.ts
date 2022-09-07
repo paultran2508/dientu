@@ -1,5 +1,8 @@
+import { ProductOptions } from './ProductOptions';
+import { Categories } from './Categories';
 import { Field, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { News } from './News';
 
 export enum ImgType {
   ICON = 'png',
@@ -29,7 +32,7 @@ export class Imgs extends BaseEntity {
 
   @Field({})
   @Column({ unique: true })
-  path!: string
+  name!: string
 
   @Field(_type => ImgOf)
   @Column({ type: 'enum', enum: ImgOf, default: ImgOf.PRODUCT })
@@ -38,6 +41,19 @@ export class Imgs extends BaseEntity {
   @Field()
   @Column({ type: 'enum', enum: ImgType, default: ImgType.JPG })
   type!: ImgType
+
+
+  @OneToOne(() => Categories, category => category.img)
+  category: Categories
+
+
+  @OneToOne(() => News, category => category.img)
+  news: News
+
+  @ManyToMany(() => ProductOptions, option => option.imgs, { onDelete: "CASCADE" })
+  options: ProductOptions[]
+
+  // @OneToOne(() => News, category => category.img)e
 
 
 

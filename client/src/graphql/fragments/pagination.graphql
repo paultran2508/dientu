@@ -1,0 +1,5 @@
+fragment pagination on Pagination {
+  cursor
+  hasMore
+  totalCount
+}

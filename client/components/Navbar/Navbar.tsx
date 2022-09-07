@@ -15,17 +15,14 @@ const Navbar = ({ }: Props) => {
   const { data } = useMeQuery()
   const [dataLogout, { loading: loadingLogout }] = useLogoutMutation()
 
+  // console.log(data, "login")
+
   const onLogout = async () => {
     await dataLogout({
       update(cache, data) {
         if (data.data) {
-          cache.writeQuery<MeQuery>({ query: MeDocument, data: { me: null } })
-          cache.modify({
-            fields: {
-              users() {
-                return []
-              }
-            }
+          cache.writeQuery<MeQuery | undefined>({
+            query: MeDocument, data: { me: null }
           })
         }
       }

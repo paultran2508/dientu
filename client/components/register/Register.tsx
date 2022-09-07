@@ -4,25 +4,61 @@ import { Button } from '../Lib/Button'
 import style from './Register.module.scss'
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
-import Field from '../Lib/Field';
+import Field, { HandleValueField } from '../Lib/Field';
 import Link from 'next/link';
+import { useRegisterMutation } from '../../src/generated/graphql';
+import { useAlert } from 'react-alert';
+import { useRouter } from 'next/router';
+import { ErrorFieldInput } from '../Lib/Field/Field';
+import { FormEventHandler, useState } from 'react';
 
 const cx = classNames.bind(style)
+
+type ValuesField = {
+  email: string
+  password: string
+  rePassword: string
+}
 
 type Props = {}
 
 const Register = ({ }: Props) => {
 
-  const handle = () => {
+  const [register, { loading }] = useRegisterMutation()
 
+  const alert = useAlert()
+  const route = useRouter()
+  const [values, setValues] = useState<ValuesField>({ email: '', password: '', rePassword: "" })
+  const [errors, setErrors] = useState<ErrorFieldInput[] | undefined>()
+
+
+
+  const handleValue: HandleValueField = (value, fieldName) => {
+    setValues(changeValues => ({ ...changeValues, [fieldName]: value }))
   }
-  const clickForm = () => {
 
+  const handleForm: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault()
+
+    const res = await register({
+      variables: { registerInput: values },
+    })
+    if (res.data?.register.code != 200 && res.data?.register.fieldErrors) {
+      // console.log(res.data?.register.fieldErrors)
+
+      setErrors(res.data.register.fieldErrors)
+
+    }
+    if (res.data?.register.code === 200) {
+      setErrors(undefined)
+      alert.success('Đăng ký thành công')
+      route.push(`/login?email=${values.email}}`)
+    }
   }
 
   return (
     <div className={cx('wrapper')}>
-      <form >
+      <form onSubmit={handleForm}>
         <h1>Đăng Ký</h1>
         <div className={cx('social')}>
           <Button text={
@@ -40,12 +76,15 @@ const Register = ({ }: Props) => {
 
           } />
         </div>
-        <Field value="sss" handle={handle} err="" name="email" placeholder='Nhập email' />
-        <Field value="" handle={handle} err="" name="password" placeholder='Nhập password' />
-        <Field value="" handle={handle} err="" name="re-password" placeholder='Nhập lại password' />
+
+        <Field handleValueFiled={handleValue} errMess={errors?.filter(err => err.name === 'email')[0]?.message} value={values.email} name="email" placeholder='Nhập email' />
+        <Field handleValueFiled={handleValue} errMess={errors?.filter(err => err.name === 'password')[0]?.message} value={values.password} name="password" placeholder='Nhập mật khẩu' />
+        <Field handleValueFiled={handleValue} errMess={errors?.filter(err => err.name === 'rePassword')[0]?.message} value={values.rePassword} name="rePassword" placeholder='Nhập lại mật khẩu' />
+
         <div className={cx('action')}>
-          <Button handle={clickForm} text="Đăng ký" />
-          <Link href={'/login'} >đăng nhập</Link>
+          {loading ? <Button text="loading" /> : <Button submit text="Đăng ký" />}
+
+          <Link href={'/register'} >đăng nhập</Link>
 
         </div>
 

@@ -1,11 +1,7 @@
 import { Field, InputType } from "type-graphql";
 
 @InputType()
-export class BrandInput {
+export class AddImgInput {
   @Field()
-  brand: string
-
-  @Field()
-  img: string
-
+  img!: string
 }

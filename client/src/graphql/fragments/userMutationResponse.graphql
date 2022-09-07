@@ -1,9 +1,12 @@
 fragment userMutationResponse on UserMutationResponse {
-  ...mutationStatus
-  fieldError {
-    ...fieldErrorInfo
-  }
+  code
+  message
+  success
+
   user {
     ...userInfo
+  }
+  fieldErrors {
+    ...fieldErrorInfo
   }
 }

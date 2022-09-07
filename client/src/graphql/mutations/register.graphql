@@ -3,5 +3,8 @@ mutation Register($registerInput: RegisterInput!) {
     code
     success
     message
+    fieldErrors {
+      ...fieldErrorInfo
+    }
   }
 }

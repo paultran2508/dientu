@@ -20,15 +20,15 @@ export class News extends BaseEntity {
   @Column()
   top!: number
 
-  @Field()
-  @OneToOne(() => Imgs)
+  @Field(_return => Imgs)
+  @OneToOne(() => Imgs, img => img.news)
   @JoinColumn()
   img: Imgs
 
-  @Field()
-  @OneToOne(() => Contents)
+  @Field(_return => Contents)
+  @OneToOne(() => Contents, content => content.news)
   @JoinColumn()
-  content: Imgs
+  content: Contents
 
   @Field()
   @OneToOne(() => Paths)

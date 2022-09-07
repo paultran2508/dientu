@@ -8,7 +8,7 @@ export abstract class IMutationResponse {
 
   @Field()
   success: boolean
-  @Field({ nullable: true })
+  @Field()
   message: string
   @Field(_type => [FieldError], { nullable: true })
   fieldErrors?: FieldError[]

@@ -1,8 +1,10 @@
 import classNames from "classnames/bind"
 import SelectProduct from "../../components/product/SelectProduct"
 import { DefaultLayout } from "../../layouts/DefaultLayout"
-import style from './Product.module.scss'
-import ProductDetail from "./ProductDetail"
+import { CategoryDocument, useCategoryQuery } from "../../src/generated/graphql"
+import { Button } from "../Lib/Button"
+import style from './product.module.scss'
+import ProductCategory from "./ProductCategory"
 
 type Props = {
 
@@ -17,32 +19,53 @@ const cx = classNames.bind(style)
 
 const Product = ({ }: Props) => {
 
-  const handle = () => {
-    console.log(1)
+  const { data, loading, fetchMore } = useCategoryQuery({
+    variables: {
+      limit: 1
+    }
+  })
+
+  const onLoadMore = async () => {
+    await fetchMore({
+      query: CategoryDocument,
+      variables: { limit: 1, cursor: data?.categories.pagination?.cursor },
+      updateQuery(pre, { fetchMoreResult }) {
+
+
+        return {
+          categories: {
+            ...fetchMoreResult.categories,
+            categories: [...pre.categories.categories ?? [], ...fetchMoreResult.categories.categories ?? []]
+          }
+
+        }
+      }
+    })
+  }
+
+  const OnChangeValues = () => {
+
   }
 
 
   return (
     <div className={cx('wrapper')} >
       <div className={cx('filter')}>
-        <SelectProduct options={ram} name="Ram" handle={handle} />
-        <SelectProduct options={cpu} name="CPU" handle={handle} />
-        <SelectProduct options={rom} name="Rom" handle={handle} />
-        <SelectProduct options={display} name="Man hinh" handle={handle} />
+        <SelectProduct options={ram} name="Ram" handle={OnChangeValues} />
+        <SelectProduct options={cpu} name="CPU" handle={OnChangeValues} />
+        <SelectProduct options={rom} name="Rom" handle={OnChangeValues} />
+        <SelectProduct options={display} name="Man hinh" handle={OnChangeValues} />
       </div>
       <hr />
       <div className={cx('ctn-product')}>
-        <ProductDetail price={7000000} name='Xiaomi poco 4' img={require('../../assets/product/xiaomi_poco4.jpg')} />
-        <ProductDetail price={20000000} name='Iphone 12' img={require('../../assets/product/iphone_12.jpg')} />
-        <ProductDetail price={15000000} name='Oppo Reno 7 ' img={require('../../assets/product/oppo_reno7.jpg')} />
-        <ProductDetail price={10000000} name='Samsung M51' img={require('../../assets/product/samsung_m51.jpg')} />
-        <ProductDetail price={20000000} name='Samsung S22' img={require('../../assets/product/samsung_s22.jpg')} />
-        <ProductDetail price={7000000} name='Xiaomi poco 4' img={require('../../assets/product/xiaomi_poco4.jpg')} />
-        <ProductDetail price={20000000} name='Iphone 12' img={require('../../assets/product/iphone_12.jpg')} />
-        <ProductDetail price={15000000} name='Oppo Reno 7 ' img={require('../../assets/product/oppo_reno7.jpg')} />
-        <ProductDetail price={10000000} name='Samsung M51' img={require('../../assets/product/samsung_m51.jpg')} />
-        <ProductDetail price={20000000} name='Samsung S22' img={require('../../assets/product/samsung_s22.jpg')} />
+
+        {data?.categories && data.categories.categories?.map(category => <ProductCategory key={category.id} categoryName={category.name} categoryId={category.id} />)}
+        {loading && <h1>Loading ...</h1>}
       </div>
+      <div className={cx('load-more')}>
+        {data?.categories.pagination?.hasMore ? <Button handle={onLoadMore} loading={loading} text="Xem thêm" /> : <>Hết</>}
+      </div>
+
 
     </div >)
 }

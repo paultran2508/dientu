@@ -19,7 +19,7 @@ type Values = { any: string }
 
 export type ErrorFieldInput = {
   name: string,
-  mess: string | null
+  message: string | null
 }
 
 const cx = classNames.bind(style)
