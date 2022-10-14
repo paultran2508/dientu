@@ -20,6 +20,7 @@ export class App {
     await sourceData.initialize()
     //Start Apollo
     await Apollo(this.appInput.express, { port: parseInt(this.appInput.env.PORT_GRAPHQL as string), secret: this.appInput.env.SECRET_TOKEN as string }, sourceData)
+    console.log("test")
   }
 
   startServer() {
