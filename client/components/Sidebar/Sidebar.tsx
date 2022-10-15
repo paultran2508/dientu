@@ -14,6 +14,7 @@ const Sidebar = () => {
         <ItemSidebar link="/profile" icon="manage_accounts" text="Cá nhân" />
         <ItemSidebar link="/cart" icon="shopping_cart" text="Đơn hàng" />
         <ItemSidebar link="/contacts" icon="contacts" text="Liên hệ" />
+        <ItemSidebar link="/dashboard" icon="dashboard" text="Quản lý" />
       </div>
     </div>
   )

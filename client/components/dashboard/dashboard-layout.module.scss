@@ -1,0 +1,19 @@
+.wrapper {
+  .menu {
+    display: flex;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: var(--bg-2);
+    gap: 1rem;
+    button {
+      width: 6rem;
+    }
+  }
+  .content {
+    margin: 1rem;
+    background-color: var(--bg-2);
+    padding: 1rem;
+    border-radius: 12px;
+  }
+}

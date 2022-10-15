@@ -11,6 +11,8 @@ export class App {
 
     //Start Postgresql
     const sourceData = await AppConnectPostgres({
+
+
       username: this.appInput.env.DB_USERNAME as string,
       password: this.appInput.env.DB_PASSWORD as string,
       host: this.appInput.env.DB_HOST as string,
