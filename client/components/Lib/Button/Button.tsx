@@ -17,6 +17,7 @@ type Props = {
   link?: string
   submit?: boolean
   test?: string
+  alt?: string
 }
 
 

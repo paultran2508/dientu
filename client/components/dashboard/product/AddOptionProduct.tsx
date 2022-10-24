@@ -1,6 +1,7 @@
 import classNames from "classnames/bind"
 import Image from "next/image"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
+import { useProductAttributesQuery } from "../../../src/generated/graphql"
 import { Button } from "../../Lib/Button"
 import ModalImgServer from "../../Lib/ImgServer/ModalImgServer"
 import { Input } from "../../Lib/Input"
@@ -11,8 +12,10 @@ import PriceOption from "./price"
 
 const cx = classNames.bind(styled)
 type Props = {
-  selects: TypeSelectAttr[],
-  name: string | number,
+  categoryId: string,
+
+  callbackAddOption: Dispatch<SetStateAction<number[]>>
+  option: number
 
 }
 
@@ -21,9 +24,11 @@ export type TypeSelectAttr = {
   options: TypeSelectOption[]
 }
 
-const AddOptionProduct = ({ selects, name }: Props) => {
+const AddOptionProduct = ({ categoryId, callbackAddOption, option }: Props) => {
   const [modal, setModal] = useState(false)
-  const [priceAdd, setPriceAdd] = useState<string[]>(["Price"])
+  const [addPrices, setAddPrices] = useState<number[]>([1])
+  const { data } = useProductAttributesQuery({ variables: { categoryId } })
+
   // console.log(selects)
 
   const onShowImgServer = () => {
@@ -31,21 +36,42 @@ const AddOptionProduct = ({ selects, name }: Props) => {
   }
 
   const addPriceOption = () => {
-    setPriceAdd(price => price.concat(["Price"]))
+    addPrices.length > 0 && setAddPrices(prices => [...prices, prices.slice(-1)[0] + 1])
+    addPrices.length === 0 && setAddPrices([1])
+
 
   }
 
+  const handleCloseOption = () => {
+    console.log(option)
+    callbackAddOption(options => options.filter(op => {
+      console.log(options)
+      return op !== option
+    }))
+  }
 
   return (
     <div className={cx("wrapper")}>
-      <h2>{"Option " + name}</h2>
+      <div className={cx("close")}>
+        <Button handle={handleCloseOption} icon="close" />
+
+      </div>
+      <h2>{"Option " + option}</h2>
       <div className={cx("ctn-select")}>
-        {selects.map(select => <SelectInput all name={select.attr} key={select.attr} options={select.options} />)}
+        {data?.productAttributes.attributes && data?.productAttributes.attributes.map(attrs =>
+          <SelectInput
+            name={attrs.name}
+            key={attrs.id}
+            options={attrs.values.map(value => ({ name: value.name, value: value.id }))}
+          />)
+        }
       </div>
       <Input name="Tên Option" />
       <div className={cx("ctn-price")}>
-        {priceAdd.map((price, index) => <PriceOption key={index} price={price + " " + `${index + 1}`} />)}
-        <Button fullWidth text="Thêm gía bán " handle={addPriceOption} />
+        {addPrices.map(price => <PriceOption callbackClose={setAddPrices} key={price} price={price} />)}
+        <div className={cx("ctn-submit-add")}>
+          <Button text="Thêm gía bán " handle={addPriceOption} />
+        </div>
       </div>
 
       <div className={cx("ctn-img")}>

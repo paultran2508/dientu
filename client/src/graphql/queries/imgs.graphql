@@ -1,0 +1,16 @@
+query Imgs($of: ImgOf) {
+  showImgs(of: $of) {
+    code
+    success
+    message
+    fieldErrors {
+      ...fieldErrorInfo
+    }
+    imgs {
+      id
+      name
+      src
+      Of
+    }
+  }
+}

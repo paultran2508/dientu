@@ -1,7 +1,7 @@
 import { ImgMutationResponse } from './../../types/mutations/ImgMutationResponse';
 import { FileUpload } from 'graphql-upload';
 import { buffer } from 'stream/consumers';
-import { Arg, Ctx, Mutation } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query } from 'type-graphql';
 import { createBaseResolver, TypeEntityExtension } from "../abstract/BaseResolver";
 import { ImgOf, Imgs, ImgType } from './../../entities/Imgs';
 import { Context } from './../../types/Context';
@@ -15,6 +15,24 @@ export class ImgResolver extends ImgBase {
 
   entityExtensions: TypeEntityExtension<Imgs, keyof Imgs>[] = [];
   setErrors: FieldError[] = [];
+
+  @Query(() => ImgMutationResponse)
+  async showImgs(
+    @Arg("of", _type => ImgOf, { nullable: true }) of?: ImgOf
+  ): Promise<ImgMutationResponse> {
+    try {
+      const imgData = await Imgs.find({
+        where: { Of: of }
+      })
+      return this._return({
+        imgs: imgData
+      })
+    } catch (error) {
+      return this.catchQuery(error)
+    }
+  }
+
+
 
   @Mutation(_return => ImgMutationResponse)
   async uploadImg(

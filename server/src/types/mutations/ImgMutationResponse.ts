@@ -13,6 +13,9 @@ export class ImgMutationResponse implements IMutationResponse {
   @Field(_type => Imgs, { nullable: true })
   img?: Imgs
 
+  @Field(_type => [Imgs], { nullable: true })
+  imgs?: Imgs[]
+
   @Field(_type => [FieldError], { nullable: true })
   fieldError?: FieldError[]
 }

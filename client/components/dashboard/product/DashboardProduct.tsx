@@ -1,12 +1,12 @@
 import classNames from 'classnames/bind'
 import { useState } from 'react'
-import { useCategoryQuery, useProductAttributesLazyQuery } from '../../../src/generated/graphql'
+import { useCategoryQuery } from '../../../src/generated/graphql'
 import { Button } from '../../Lib/Button'
 import { Input } from '../../Lib/Input'
 import SelectInput from '../../Lib/select'
 import { Callback } from '../../Lib/select/SelectInput'
 import DashboardLayout from '../DashboardLayout'
-import AddOptionProduct, { TypeSelectAttr } from './AddOptionProduct'
+import AddOptionProduct from './AddOptionProduct'
 import styled from "./dashboard-product.module.scss"
 
 type Props = {}
@@ -15,25 +15,27 @@ const cx = classNames.bind(styled)
 
 const DashboardProduct = ({ }: Props) => {
 
-  const [selectsAttr, setSelectsAttr] = useState<TypeSelectAttr[][] | undefined>()
+  const [addOptions, setAddOptions] = useState<number[]>([1])
 
-
+  const [categoryId, setCategoryId] = useState<string | undefined>()
   const { data } = useCategoryQuery()
-  const [getAttr, _] = useProductAttributesLazyQuery()
 
   const onSelectCategory: Callback = async (value, name) => {
     name
-    const { data } = await getAttr({ variables: { categoryId: value } })
-    const selectAttr = data?.productAttributes.attributes?.map<TypeSelectAttr>(attr => ({
-      attr: attr.name,
-      options: attr.values.map(value => ({ name: value.name, value: value.id }))
-    }))
+    // value !== "" && setCategoryId(value)
+    value === "" && setCategoryId(undefined)
+    addOptions.length === 0 && setAddOptions([1])
+    if (value !== "" && categoryId !== value) {
+      setCategoryId(value)
+      setAddOptions([1])
+    }
 
-    setSelectsAttr(selectAttr ? [selectAttr] : selectAttr)
   }
 
   const onAddOption = () => {
-    selectsAttr && setSelectsAttr([...selectsAttr, selectsAttr[0]])
+    addOptions && setAddOptions([...addOptions, addOptions.slice(-1)[0] + 1])
+    addOptions.length === 0 && setAddOptions([1])
+
   }
 
 
@@ -50,12 +52,17 @@ const DashboardProduct = ({ }: Props) => {
 
 
         <div className={cx('ctn-option')}>
-          { }
-          {selectsAttr && selectsAttr.map((select, index) => <AddOptionProduct key={index} name={index + 1} selects={select} />)}
+
+
           <div className={cx("option")}>
+            {addOptions.length > 0 && categoryId && addOptions.map((op) =>
+              <AddOptionProduct callbackAddOption={setAddOptions}
+                option={op} key={op}
+
+                categoryId={categoryId} />)}
           </div>
         </div>
-        {selectsAttr && <Button handle={onAddOption} text="Thêm option" />}
+        {<Button handle={onAddOption} text="Thêm option" />}
       </div>
 
     </div>

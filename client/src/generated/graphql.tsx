@@ -125,6 +125,7 @@ export type ImgMutationResponse = IMutationResponse & {
   fieldError?: Maybe<Array<FieldError>>;
   fieldErrors?: Maybe<Array<FieldError>>;
   img?: Maybe<Imgs>;
+  imgs?: Maybe<Array<Imgs>>;
   message: Scalars['String'];
   success: Scalars['Boolean'];
 };
@@ -325,6 +326,7 @@ export type Query = {
   productAttributes: ProductAttributeMutationResponse;
   productColors: ProductColorMutationResponse;
   productsByCategoryId: ProductMutationResponse;
+  showImgs: ImgMutationResponse;
   showProducts: ProductMutationResponse;
 };
 
@@ -344,6 +346,11 @@ export type QueryProductsByCategoryIdArgs = {
   categoryId: Scalars['String'];
   cursor?: InputMaybe<Scalars['DateTime']>;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryShowImgsArgs = {
+  of?: InputMaybe<ImgOf>;
 };
 
 export type RegisterInput = {
@@ -450,6 +457,13 @@ export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type HelloQuery = { __typename?: 'Query', hello: string };
+
+export type ImgsQueryVariables = Exact<{
+  of?: InputMaybe<ImgOf>;
+}>;
+
+
+export type ImgsQuery = { __typename?: 'Query', showImgs: { __typename?: 'ImgMutationResponse', code: number, success: boolean, message: string, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, imgs?: Array<{ __typename?: 'Imgs', id: string, name: string, src: string, Of: ImgOf }> | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -857,6 +871,52 @@ export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Hell
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export const ImgsDocument = gql`
+    query Imgs($of: ImgOf) {
+  showImgs(of: $of) {
+    code
+    success
+    message
+    fieldErrors {
+      ...fieldErrorInfo
+    }
+    imgs {
+      id
+      name
+      src
+      Of
+    }
+  }
+}
+    ${FieldErrorInfoFragmentDoc}`;
+
+/**
+ * __useImgsQuery__
+ *
+ * To run a query within a React component, call `useImgsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useImgsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useImgsQuery({
+ *   variables: {
+ *      of: // value for 'of'
+ *   },
+ * });
+ */
+export function useImgsQuery(baseOptions?: Apollo.QueryHookOptions<ImgsQuery, ImgsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ImgsQuery, ImgsQueryVariables>(ImgsDocument, options);
+      }
+export function useImgsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ImgsQuery, ImgsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ImgsQuery, ImgsQueryVariables>(ImgsDocument, options);
+        }
+export type ImgsQueryHookResult = ReturnType<typeof useImgsQuery>;
+export type ImgsLazyQueryHookResult = ReturnType<typeof useImgsLazyQuery>;
+export type ImgsQueryResult = Apollo.QueryResult<ImgsQuery, ImgsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
