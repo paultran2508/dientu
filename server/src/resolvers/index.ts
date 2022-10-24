@@ -1,3 +1,4 @@
+import { ImgResolver } from './product/ImgResolver';
 import { BrandResolver } from './product/BrandResolver';
 import { CategoryResolver } from './product/CategoryResolver';
 import { UserResolver } from './UserResolver';
@@ -14,7 +15,8 @@ const resolves: NonEmptyArray<Function> | NonEmptyArray<string> = [
   ProductsBaseResolver,
   CategoryResolver,
   BrandResolver,
-  ProductValueResolver
+  ProductValueResolver,
+  ImgResolver
 ]
 
 export default resolves

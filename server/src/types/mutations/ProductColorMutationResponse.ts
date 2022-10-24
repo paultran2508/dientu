@@ -11,7 +11,7 @@ export class ProductColorMutationResponse implements IMutationResponse {
   success: boolean;
   fieldErrors?: FieldError[]
 
-  @Field({ nullable: true })
-  color?: ProductColors
+  @Field(_type => [ProductColors], { nullable: true })
+  color?: ProductColors[]
 
 }

@@ -1,0 +1,8 @@
+fragment productAttributeInfo on ProductAttributes {
+  name
+  id
+  values {
+    name
+    id
+  }
+}

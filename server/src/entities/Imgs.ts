@@ -1,7 +1,7 @@
 import { ProductOptions } from './ProductOptions';
 import { Categories } from './Categories';
 import { Field, ObjectType, registerEnumType } from "type-graphql";
-import { BaseEntity, Column, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { News } from './News';
 
 export enum ImgType {
@@ -30,6 +30,9 @@ export class Imgs extends BaseEntity {
   id!: string
 
 
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+  create_at!: Date
+
   @Field({})
   @Column({ unique: true })
   name!: string
@@ -42,10 +45,13 @@ export class Imgs extends BaseEntity {
   @Column({ type: 'enum', enum: ImgType, default: ImgType.JPG })
   type!: ImgType
 
+  @Field()
+  @Column({ unique: true })
+  src!: string
+
 
   @OneToOne(() => Categories, category => category.img)
   category: Categories
-
 
   @OneToOne(() => News, category => category.img)
   news: News

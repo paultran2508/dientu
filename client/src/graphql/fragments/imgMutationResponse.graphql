@@ -1,0 +1,10 @@
+fragment imgMutationResponse on ImgMutationResponse {
+  code
+  success
+  fieldErrors {
+    ...fieldErrorInfo
+  }
+  img {
+    ...imgInfo
+  }
+}

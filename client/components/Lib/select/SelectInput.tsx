@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind'
+import { ChangeEventHandler, useState } from 'react'
 import style from './select-input.module.scss'
 
 
@@ -7,19 +8,29 @@ const cx = classNames.bind(style)
 
 type Props = {
   name: string,
-  options: string[]
-  handle?: () => void
+  options: TypeSelectOption[]
+  handle?: Callback
+  all?: boolean
 }
 
+export type TypeSelectOption = { value: string, name: string }
+export type Callback = (value: string, name: string) => void
 
+const SelectInput = ({ name, options, handle, all }: Props) => {
 
-const SelectInput = ({ name, options, handle }: Props) => {
+  const [value, setValue] = useState("")
+
+  const onChangeValue: ChangeEventHandler<HTMLSelectElement> = (e) => {
+    setValue(e.target.value)
+    // console.log(e.target.value)
+  }
+
   return (
     <div className={cx('wrapper')}>
       <label>{name}:</label>
-      <select onClick={() => { handle && handle() }}>
-        <option value={''}>Tac ca</option>
-        {options.map((value, id) => (<option key={id} value={value}>{value}</option>))}
+      <select onClick={() => { handle && handle(value, name) }} defaultValue={value} onChange={onChangeValue} >
+        {all && <option value={''}>Tac ca</option>}
+        {options.map(option => (<option key={option.value} value={option.value}>{option.name}</option>))}
       </select>
 
     </div>

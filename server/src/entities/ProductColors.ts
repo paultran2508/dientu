@@ -1,9 +1,9 @@
 import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@ObjectType({ isAbstract: true })
+@ObjectType({})
 @Entity()
-export abstract class ProductColors {
+export class ProductColors extends BaseEntity {
 
   @Field()
   @PrimaryGeneratedColumn('uuid')

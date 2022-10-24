@@ -1,4 +1,6 @@
 fragment imgInfo on Imgs {
   name
   type
+  id
+  src
 }

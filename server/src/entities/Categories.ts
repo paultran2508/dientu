@@ -1,5 +1,6 @@
+import { ProductAttributes } from './ProductAttributes';
 import { Field, ID, ObjectType } from "type-graphql";
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Imgs } from "./Imgs";
 import { News } from "./News";
 import { Products } from "./Products";
@@ -36,5 +37,10 @@ export class Categories extends BaseEntity {
   @Field(_type => [News])
   @OneToMany(() => News, news => news.category)
   news?: News[]
+
+  @Field(_type => [ProductAttributes])
+  @ManyToMany(() => ProductAttributes)
+  @JoinTable()
+  attributes: ProductAttributes[]
 
 }

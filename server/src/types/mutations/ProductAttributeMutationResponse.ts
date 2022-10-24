@@ -11,7 +11,7 @@ export class ProductAttributeMutationResponse implements IMutationResponse {
   fieldErrors?: FieldError[];
   success: boolean;
 
-  @Field(_type => ProductAttributes, { nullable: true })
-  attribute?: ProductAttributes
+  @Field(_type => [ProductAttributes], { nullable: true })
+  attributes?: ProductAttributes[]
 
 }

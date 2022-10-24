@@ -1,4 +1,6 @@
-import { Arg, Ctx, Mutation, UseMiddleware } from 'type-graphql';
+import { ProductColorMutationResponse } from './../../types/mutations/ProductColorMutationResponse';
+import { Categories } from './../../entities/Categories';
+import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
 import { ProductValues } from "../../entities/ProductValues";
 import { createBaseResolver, TypeEntityExtension } from "../abstract/BaseResolver";
 import { ProductAttributes } from './../../entities/ProductAttributes';
@@ -6,6 +8,7 @@ import { checkAuth } from './../../middleware/checkAuth';
 import { Context } from './../../types/Context';
 import { FieldError } from './../../types/mutations/FieldError';
 import { ProductAttributeMutationResponse } from './../../types/mutations/ProductAttributeMutationResponse';
+import { ProductColors } from '../../entities/ProductColors';
 
 const ProductValueBase = createBaseResolver({ name: "productValue", entity: ProductValues })
 
@@ -13,26 +16,36 @@ export class ProductValueResolver extends ProductValueBase {
   entityExtensions: TypeEntityExtension<ProductValues, keyof ProductValues>[];
   setErrors: FieldError[] = [];
 
-  // @Mutation(_return => ProductValueMutationResponse)
+  @Query(_type => ProductAttributeMutationResponse)
   // @UseMiddleware(checkAuth)
-  // async addValue(
-  //   @Arg('productValueInput') { attributeId, value }: AddProductValueInput,
-  //   @Ctx() { dataSource }: Context
-  // ): Promise<ProductValueMutationResponse> {
-  //   try {
-  //     if (!value) this.setErrors.push({ message: "value không được để trống", code: "404", name: "value" })
-  //     const attributeData = await dataSource.getRepository(ProductAttributes).findOneBy({ id: attributeId })
-  //     if (!attributeData) this.setErrors.push({ message: "không tìm thấy attribute", code: "404", name: "attribute" })
-  //     if (attributeData && value) {
-  //       return this._return({
-  //         values: await ProductValues.save({ attribute: attributeData, value })
-  //       })
-  //     }
-  //     throw new HandleErrorResponse()
-  //   } catch (error) {
-  //     return this.catchQuery(error)
-  //   }
-  // }
+  async productAttributes(
+    @Arg('categoryId', { nullable: true }) categoryId?: string,
+  ): Promise<ProductAttributeMutationResponse> {
+    try {
+      if (categoryId) console.log(categoryId)
+      const valuesData = await Categories.find({
+        relations: ["attributes.values"],
+        where: { id: categoryId }
+      })
+
+      // const attr = valuesData.map(att=> att.attributes)
+      return this._return({
+        attributes: valuesData[0].attributes
+      })
+
+    } catch (error) {
+      return this.catchQuery(error)
+    }
+  }
+
+  @Query(_type => ProductColorMutationResponse)
+  async productColors(): Promise<ProductColorMutationResponse> {
+    try {
+      return this._return({ color: await ProductColors.find() })
+    } catch (error) {
+      return this.catchQuery(error)
+    }
+  }
 
   @Mutation(_type => ProductAttributeMutationResponse)
   @UseMiddleware(checkAuth)

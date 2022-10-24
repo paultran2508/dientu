@@ -24,6 +24,7 @@ export class CategoryResolver extends CategoryBase {
     @Arg('limit', _type => Int, { nullable: true }) limit?: number
   ): Promise<CategoryMutationResponse> {
     const realLimit: number = !limit || (limit > 5) ? 5 : limit
+
     const totalCount = await Categories.count()
     const categories = await Categories.find({
       relations: ["img"],
@@ -33,6 +34,7 @@ export class CategoryResolver extends CategoryBase {
       order: { createAt: "DESC" },
       take: realLimit
     })
+    console.log(categories)
     return this._return({
       categories, pagination: {
         cursor: categories.length > 0 ? categories.slice(-1)[0].createAt : undefined,

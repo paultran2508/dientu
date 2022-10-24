@@ -22,11 +22,8 @@ const DashboardLayout = ({ children }: Props) => {
         <div className={cx("content")}>
           {children}
         </div>
-
       </div>
     </DefaultLayout>
-
-
   )
 }
 

@@ -1,0 +1,9 @@
+.wrapper {
+  background-color: var(--bg-1);
+  padding: 0.5rem;
+  .ctn-select {
+    margin: 0.5rem 0;
+    display: flex;
+    gap: 0.5rem;
+  }
+}

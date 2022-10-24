@@ -8,6 +8,7 @@ import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core/dist/plugi
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import resolvers from '../resolvers'
 import { DataSource } from 'typeorm';
+// import { graphqlUploadExpress } from 'graphql-upload';
 
 export const Apollo = async (exp: Express, variable: Variable, dataSource: DataSource) => {
   const port = variable.port ?? 5000
@@ -25,6 +26,9 @@ export const Apollo = async (exp: Express, variable: Variable, dataSource: DataS
     ],
     context: ({ req, res }: Context) => ({ req, res, dataSource })
   })
+
+  const graphUpload = require('graphql-upload/graphqlUploadExpress.js')
+  exp.use(graphUpload())
   await main.start()
   main.applyMiddleware({
     app: exp,

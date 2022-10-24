@@ -14,6 +14,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   DateTime: any;
+  Upload: any;
 };
 
 export type AddBrandInput = {
@@ -49,6 +50,7 @@ export type AddProductOptionInput = {
 export type AddProductPriceInput = {
   colorId: Scalars['String'];
   note: Scalars['String'];
+  optionId?: InputMaybe<Scalars['String']>;
   price: Scalars['Float'];
   type?: InputMaybe<PriceType>;
 };
@@ -71,6 +73,7 @@ export type Brands = {
 
 export type Categories = {
   __typename?: 'Categories';
+  attributes: Array<ProductAttributes>;
   createAt: Scalars['DateTime'];
   id: Scalars['ID'];
   img: Imgs;
@@ -105,13 +108,23 @@ export type Contents = {
 export type FieldError = {
   __typename?: 'FieldError';
   code?: Maybe<Scalars['String']>;
-  message: Scalars['String'];
+  message?: Maybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
 export type IMutationResponse = {
   code: Scalars['Float'];
   fieldErrors?: Maybe<Array<FieldError>>;
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+export type ImgMutationResponse = IMutationResponse & {
+  __typename?: 'ImgMutationResponse';
+  code: Scalars['Float'];
+  fieldError?: Maybe<Array<FieldError>>;
+  fieldErrors?: Maybe<Array<FieldError>>;
+  img?: Maybe<Imgs>;
   message: Scalars['String'];
   success: Scalars['Boolean'];
 };
@@ -128,6 +141,7 @@ export type Imgs = {
   Of: ImgOf;
   id: Scalars['String'];
   name: Scalars['String'];
+  src: Scalars['String'];
   type: Scalars['String'];
 };
 
@@ -141,11 +155,12 @@ export type Mutation = {
   addAttribute: ProductAttributeMutationResponse;
   addBrand: BrandMutationResponse;
   addCategory: CategoryMutationResponse;
-  addColor: ProductColorMutationResponse;
   addProduct: ProductMutationResponse;
+  deleteProduct: Scalars['Boolean'];
   login: UserMutationResponse;
   logout: Scalars['Boolean'];
   register: UserMutationResponse;
+  uploadImg: ImgMutationResponse;
 };
 
 
@@ -164,13 +179,13 @@ export type MutationAddCategoryArgs = {
 };
 
 
-export type MutationAddColorArgs = {
-  color: Scalars['String'];
+export type MutationAddProductArgs = {
+  productOptionInput: AddProductInput;
 };
 
 
-export type MutationAddProductArgs = {
-  productOptionInput: AddProductInput;
+export type MutationDeleteProductArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -181,6 +196,11 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   registerInput: RegisterInput;
+};
+
+
+export type MutationUploadImgArgs = {
+  file: Scalars['Upload'];
 };
 
 export type News = {
@@ -217,7 +237,7 @@ export enum PriceType {
 
 export type ProductAttributeMutationResponse = IMutationResponse & {
   __typename?: 'ProductAttributeMutationResponse';
-  attribute?: Maybe<ProductAttributes>;
+  attributes?: Maybe<Array<ProductAttributes>>;
   code: Scalars['Float'];
   fieldErrors?: Maybe<Array<FieldError>>;
   message: Scalars['String'];
@@ -234,7 +254,7 @@ export type ProductAttributes = {
 export type ProductColorMutationResponse = IMutationResponse & {
   __typename?: 'ProductColorMutationResponse';
   code: Scalars['Float'];
-  color?: Maybe<ProductColors>;
+  color?: Maybe<Array<ProductColors>>;
   fieldErrors?: Maybe<Array<FieldError>>;
   message: Scalars['String'];
   success: Scalars['Boolean'];
@@ -302,6 +322,8 @@ export type Query = {
   categories: CategoryMutationResponse;
   hello: Scalars['String'];
   me?: Maybe<Users>;
+  productAttributes: ProductAttributeMutationResponse;
+  productColors: ProductColorMutationResponse;
   productsByCategoryId: ProductMutationResponse;
   showProducts: ProductMutationResponse;
 };
@@ -310,6 +332,11 @@ export type Query = {
 export type QueryCategoriesArgs = {
   cursor?: InputMaybe<Scalars['DateTime']>;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryProductAttributesArgs = {
+  categoryId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -355,38 +382,42 @@ export type Users = {
 
 export type BrandInfoFragment = { __typename?: 'Brands', name: string, id: string };
 
-export type CategoryInfoFragment = { __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string } };
+export type CategoryInfoFragment = { __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } };
 
-export type CategoryMutationResponseFragment = { __typename?: 'CategoryMutationResponse', code: number, message: string, success: boolean, categories?: Array<{ __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string } }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null };
+export type CategoryMutationResponseFragment = { __typename?: 'CategoryMutationResponse', code: number, message: string, success: boolean, categories?: Array<{ __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null };
 
-export type FieldErrorInfoFragment = { __typename?: 'FieldError', name: string, message: string, code?: string | null };
+export type FieldErrorInfoFragment = { __typename?: 'FieldError', name: string, message?: string | null, code?: string | null };
 
-export type ImgInfoFragment = { __typename?: 'Imgs', name: string, type: string };
+export type ImgInfoFragment = { __typename?: 'Imgs', name: string, type: string, id: string, src: string };
+
+export type ImgMutationResponseFragment = { __typename?: 'ImgMutationResponse', code: number, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, img?: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } | null };
 
 export type PaginationFragment = { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number };
 
 export type PathInfoFragment = { __typename?: 'Paths', name: string, id: string };
 
-export type ProductInfoFragment = { __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, attribute: { __typename?: 'ProductAttributes', name: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } };
+export type ProductAttributeInfoFragment = { __typename?: 'ProductAttributes', name: string, id: string, values: Array<{ __typename?: 'ProductValues', name: string, id: string }> };
 
-export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, attribute: { __typename?: 'ProductAttributes', name: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message: string, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null };
+export type ProductInfoFragment = { __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } };
 
-export type ProductOptionInfoFragment = { __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, attribute: { __typename?: 'ProductAttributes', name: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string }> };
+export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null };
+
+export type ProductOptionInfoFragment = { __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string }> };
 
 export type ProductPriceInfoFragment = { __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } };
 
-export type ProductValueInfoFragment = { __typename?: 'ProductValues', name: string, attribute: { __typename?: 'ProductAttributes', name: string } };
+export type ProductValueInfoFragment = { __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } };
 
 export type UserInfoFragment = { __typename?: 'Users', id: string, avatar: string, email: string, theme: string };
 
-export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, message: string, success: boolean, user?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message: string, code?: string | null }> | null };
+export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, message: string, success: boolean, user?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null };
 
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserMutationResponse', code: number, message: string, success: boolean, user?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message: string, code?: string | null }> | null } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserMutationResponse', code: number, message: string, success: boolean, user?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -398,7 +429,14 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserMutationResponse', code: number, success: boolean, message: string, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message: string, code?: string | null }> | null } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserMutationResponse', code: number, success: boolean, message: string, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null } };
+
+export type UploadImgMutationVariables = Exact<{
+  file: Scalars['Upload'];
+}>;
+
+
+export type UploadImgMutation = { __typename?: 'Mutation', uploadImg: { __typename?: 'ImgMutationResponse', code: number, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, img?: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } | null } };
 
 export type CategoryQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
@@ -406,7 +444,7 @@ export type CategoryQueryVariables = Exact<{
 }>;
 
 
-export type CategoryQuery = { __typename?: 'Query', categories: { __typename?: 'CategoryMutationResponse', code: number, message: string, success: boolean, categories?: Array<{ __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string } }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null } };
+export type CategoryQuery = { __typename?: 'Query', categories: { __typename?: 'CategoryMutationResponse', code: number, message: string, success: boolean, categories?: Array<{ __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null } };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -418,6 +456,18 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null };
 
+export type ProductAttributesQueryVariables = Exact<{
+  categoryId: Scalars['String'];
+}>;
+
+
+export type ProductAttributesQuery = { __typename?: 'Query', productAttributes: { __typename?: 'ProductAttributeMutationResponse', code: number, success: boolean, message: string, attributes?: Array<{ __typename?: 'ProductAttributes', name: string, id: string, values: Array<{ __typename?: 'ProductValues', name: string, id: string }> }> | null } };
+
+export type ProductColorsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProductColorsQuery = { __typename?: 'Query', productColors: { __typename?: 'ProductColorMutationResponse', code: number, success: boolean, message: string, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, color?: Array<{ __typename?: 'ProductColors', name: string, id: string }> | null } };
+
 export type ProductsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   cursor?: InputMaybe<Scalars['DateTime']>;
@@ -425,7 +475,7 @@ export type ProductsQueryVariables = Exact<{
 }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', productsByCategoryId: { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, attribute: { __typename?: 'ProductAttributes', name: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message: string, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null } };
+export type ProductsQuery = { __typename?: 'Query', productsByCategoryId: { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null } };
 
 export const BrandInfoFragmentDoc = gql`
     fragment brandInfo on Brands {
@@ -437,6 +487,8 @@ export const ImgInfoFragmentDoc = gql`
     fragment imgInfo on Imgs {
   name
   type
+  id
+  src
 }
     `;
 export const CategoryInfoFragmentDoc = gql`
@@ -470,10 +522,40 @@ export const CategoryMutationResponseFragmentDoc = gql`
 }
     ${CategoryInfoFragmentDoc}
 ${PaginationFragmentDoc}`;
+export const FieldErrorInfoFragmentDoc = gql`
+    fragment fieldErrorInfo on FieldError {
+  name
+  message
+  code
+}
+    `;
+export const ImgMutationResponseFragmentDoc = gql`
+    fragment imgMutationResponse on ImgMutationResponse {
+  code
+  success
+  fieldErrors {
+    ...fieldErrorInfo
+  }
+  img {
+    ...imgInfo
+  }
+}
+    ${FieldErrorInfoFragmentDoc}
+${ImgInfoFragmentDoc}`;
 export const PathInfoFragmentDoc = gql`
     fragment pathInfo on Paths {
   name
   id
+}
+    `;
+export const ProductAttributeInfoFragmentDoc = gql`
+    fragment productAttributeInfo on ProductAttributes {
+  name
+  id
+  values {
+    name
+    id
+  }
 }
     `;
 export const ProductPriceInfoFragmentDoc = gql`
@@ -489,8 +571,10 @@ export const ProductPriceInfoFragmentDoc = gql`
 export const ProductValueInfoFragmentDoc = gql`
     fragment productValueInfo on ProductValues {
   name
+  id
   attribute {
     name
+    id
   }
 }
     `;
@@ -530,13 +614,6 @@ export const ProductInfoFragmentDoc = gql`
   }
 }
     ${ProductOptionInfoFragmentDoc}`;
-export const FieldErrorInfoFragmentDoc = gql`
-    fragment fieldErrorInfo on FieldError {
-  name
-  message
-  code
-}
-    `;
 export const ProductMutationResponseFragmentDoc = gql`
     fragment productMutationResponse on ProductMutationResponse {
   code
@@ -679,6 +756,39 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UploadImgDocument = gql`
+    mutation UploadImg($file: Upload!) {
+  uploadImg(file: $file) {
+    ...imgMutationResponse
+  }
+}
+    ${ImgMutationResponseFragmentDoc}`;
+export type UploadImgMutationFn = Apollo.MutationFunction<UploadImgMutation, UploadImgMutationVariables>;
+
+/**
+ * __useUploadImgMutation__
+ *
+ * To run a mutation, you first call `useUploadImgMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadImgMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadImgMutation, { data, loading, error }] = useUploadImgMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadImgMutation(baseOptions?: Apollo.MutationHookOptions<UploadImgMutation, UploadImgMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadImgMutation, UploadImgMutationVariables>(UploadImgDocument, options);
+      }
+export type UploadImgMutationHookResult = ReturnType<typeof useUploadImgMutation>;
+export type UploadImgMutationResult = Apollo.MutationResult<UploadImgMutation>;
+export type UploadImgMutationOptions = Apollo.BaseMutationOptions<UploadImgMutation, UploadImgMutationVariables>;
 export const CategoryDocument = gql`
     query Category($limit: Int, $cursor: DateTime) {
   categories(cursor: $cursor, limit: $limit) {
@@ -781,6 +891,89 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const ProductAttributesDocument = gql`
+    query ProductAttributes($categoryId: String!) {
+  productAttributes(categoryId: $categoryId) {
+    code
+    success
+    message
+    attributes {
+      ...productAttributeInfo
+    }
+  }
+}
+    ${ProductAttributeInfoFragmentDoc}`;
+
+/**
+ * __useProductAttributesQuery__
+ *
+ * To run a query within a React component, call `useProductAttributesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductAttributesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductAttributesQuery({
+ *   variables: {
+ *      categoryId: // value for 'categoryId'
+ *   },
+ * });
+ */
+export function useProductAttributesQuery(baseOptions: Apollo.QueryHookOptions<ProductAttributesQuery, ProductAttributesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProductAttributesQuery, ProductAttributesQueryVariables>(ProductAttributesDocument, options);
+      }
+export function useProductAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductAttributesQuery, ProductAttributesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProductAttributesQuery, ProductAttributesQueryVariables>(ProductAttributesDocument, options);
+        }
+export type ProductAttributesQueryHookResult = ReturnType<typeof useProductAttributesQuery>;
+export type ProductAttributesLazyQueryHookResult = ReturnType<typeof useProductAttributesLazyQuery>;
+export type ProductAttributesQueryResult = Apollo.QueryResult<ProductAttributesQuery, ProductAttributesQueryVariables>;
+export const ProductColorsDocument = gql`
+    query ProductColors {
+  productColors {
+    code
+    success
+    message
+    fieldErrors {
+      ...fieldErrorInfo
+    }
+    color {
+      name
+      id
+    }
+  }
+}
+    ${FieldErrorInfoFragmentDoc}`;
+
+/**
+ * __useProductColorsQuery__
+ *
+ * To run a query within a React component, call `useProductColorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductColorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductColorsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProductColorsQuery(baseOptions?: Apollo.QueryHookOptions<ProductColorsQuery, ProductColorsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProductColorsQuery, ProductColorsQueryVariables>(ProductColorsDocument, options);
+      }
+export function useProductColorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductColorsQuery, ProductColorsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProductColorsQuery, ProductColorsQueryVariables>(ProductColorsDocument, options);
+        }
+export type ProductColorsQueryHookResult = ReturnType<typeof useProductColorsQuery>;
+export type ProductColorsLazyQueryHookResult = ReturnType<typeof useProductColorsLazyQuery>;
+export type ProductColorsQueryResult = Apollo.QueryResult<ProductColorsQuery, ProductColorsQueryVariables>;
 export const ProductsDocument = gql`
     query Products($limit: Int, $cursor: DateTime, $categoryId: String!) {
   productsByCategoryId(categoryId: $categoryId, cursor: $cursor, limit: $limit) {

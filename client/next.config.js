@@ -4,7 +4,10 @@ const nextConfig = {
   swcMinify: true,
   compiler:{
     styledComponents: true
-  }
+  },
+  images: {
+    domains: ['i1-vnexpress.vnecdn.net', "i.ibb.co"]
+  },
 }
 
 module.exports = nextConfig

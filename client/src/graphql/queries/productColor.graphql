@@ -1,0 +1,14 @@
+query ProductColors {
+  productColors {
+    code
+    success
+    message
+    fieldErrors {
+      ...fieldErrorInfo
+    }
+    color {
+      name
+      id
+    }
+  }
+}
