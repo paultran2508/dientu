@@ -10,24 +10,50 @@
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0, 0, 0); /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
 
-  .content {
-    background-color: var(--bg-2);
-    margin: 1rem auto; /* 15% from the top and centered */
-    padding: 20px;
-    position: relative;
-    width: 80%; /* Could be more or less, depending on screen size */
-    .close {
-      position: absolute;
-      right: 0;
-      top: 0;
+.content {
+  background-color: var(--bg-2);
+  margin: 1rem auto; /* 15% from the top and centered */
+  padding: 20px;
+  position: relative;
+  width: 80%; /* Could be more or less, depending on screen size */
+  .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .ctn-form-upload {
+    margin: 1rem 0;
+    // border: 1px solid;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    background-color: var(--bg-3);
+    padding: 1rem;
+    h1 {
+      width: 100%;
     }
-    .ctn-button {
-      display: flex;
-      gap: 1rem;
+    input {
+      // border: 1px solid;
+      margin: 0;
+      padding: 0;
+      margin-right: 2rem;
     }
   }
+  .ctn-button {
+    display: flex;
+    gap: 1rem;
+  }
+  .ctn-show-img {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    // border: 1px solid;
+    gap: 1rem;
+  }
 }
+
 .open {
   display: block;
   border: 1px solid white;

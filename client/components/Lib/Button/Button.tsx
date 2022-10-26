@@ -1,34 +1,40 @@
 import { Icon } from "@mui/material"
 import classNames from "classnames/bind"
 import Link from "next/link"
-import { memo } from "react"
 import { HandleClickButton } from "."
 import style from './Button.module.scss'
 
 
 const cx = classNames.bind(style)
 
-type Props = {
+export type ButtonProps<T> = {
   text?: React.ReactNode
   icon?: string
   loading?: boolean
   fullWidth?: boolean,
-  handle?: HandleClickButton,
+  handle?: HandleClickButton<T>,
   link?: string
   submit?: boolean
-  test?: string
   alt?: string
+  data?: T,
+  // callbackData?: (data?: T) => void
+  // test?: Gene<string>
 }
 
+// type Gene = <T>(name: T) => void
 
-const Button = (props: Props) => {
+
+function Button<T>({ icon, text, link, handle, loading, fullWidth, submit, data }: ButtonProps<T>) {
 
 
-  const { icon, text, link, handle, loading, fullWidth, submit } = props
 
-  // console.log('render: ', text)
+  const buttonEl: React.ReactNode = <button
+    type={submit ? 'submit' : 'button'}
 
-  const buttonEl: React.ReactNode = <button type={submit ? 'submit' : 'button'} onClick={handle} className={cx('button-custom', fullWidth && 'full-width')} >
+    onClick={(e) => {
+      handle && handle(e, data)
+    }}
+    className={cx('button-custom', fullWidth && 'full-width')} >
     {loading ? (<span>loading ... </span>) : <>{text && <span className={cx('text')}>{text}</span>}
       {icon && <Icon >{icon}</Icon>}</>}
 
@@ -40,4 +46,4 @@ const Button = (props: Props) => {
 
 
 
-export default memo(Button)
+export default Button

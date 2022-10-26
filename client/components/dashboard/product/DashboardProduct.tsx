@@ -22,20 +22,18 @@ const DashboardProduct = ({ }: Props) => {
 
   const onSelectCategory: Callback = async (value, name) => {
     name
-    // value !== "" && setCategoryId(value)
+    // console.log(name)
     value === "" && setCategoryId(undefined)
     addOptions.length === 0 && setAddOptions([1])
     if (value !== "" && categoryId !== value) {
       setCategoryId(value)
       setAddOptions([1])
     }
-
   }
 
   const onAddOption = () => {
     addOptions && setAddOptions([...addOptions, addOptions.slice(-1)[0] + 1])
     addOptions.length === 0 && setAddOptions([1])
-
   }
 
 
@@ -47,28 +45,20 @@ const DashboardProduct = ({ }: Props) => {
           <Input width='400px' name='Tên Sản Phẩm ' />
           {data?.categories.categories && data && <SelectInput all name='Category' handle={onSelectCategory}
             options={data.categories.categories.map(value => ({ name: value.name, value: value.id }))} />}
-
         </div>
-
-
         <div className={cx('ctn-option')}>
-
-
           <div className={cx("option")}>
             {addOptions.length > 0 && categoryId && addOptions.map((op) =>
               <AddOptionProduct callbackAddOption={setAddOptions}
                 option={op} key={op}
-
                 categoryId={categoryId} />)}
           </div>
         </div>
         {<Button handle={onAddOption} text="Thêm option" />}
       </div>
-
     </div>
   )
 }
 
 DashboardProduct.Layout = DashboardLayout
-
 export default DashboardProduct
