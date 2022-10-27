@@ -1,7 +1,6 @@
 import classNames from "classnames/bind"
-import Image from "next/image"
 import { ChangeEventHandler, Dispatch, memo, SetStateAction, useState } from "react"
-import { ImgOf, InputMaybe, useImgsLazyQuery, useUploadImgMutation } from "../../../src/generated/graphql"
+import { ImgMutationResponse, ImgOf, ImgsDocument, InputMaybe, useImgsLazyQuery, useUploadImgMutation } from "../../../src/generated/graphql"
 import { Button, HandleClickButton } from "../Button"
 import ImgDetail from "./ImgDetail"
 import style from "./modal-img-server.module.scss"
@@ -19,7 +18,7 @@ export type GetChooseImgs = (imgs: string[]) => void
 const ModalImgServer = ({ open, close, callbackImgValues }: Props) => {
 
   const [uploadFiles, setUploadFiles] = useState<FileList[]>([])
-  const [dataImgs, setDataImgs] = useState<{ name: string, src: string, id: string }[] | undefined>()
+  const [dataImgs, setDataImgs] = useState<{} & { name: string, src: string, id: string }[]>([])
   const [chooseImgs, setChooseImg] = useState<string[]>([])
   const [upload, { loading, data }] = useUploadImgMutation()
   const [imgs] = useImgsLazyQuery()
@@ -29,18 +28,38 @@ const ModalImgServer = ({ open, close, callbackImgValues }: Props) => {
   const onUploadImg = async () => {
 
     try {
-      console.log(uploadFiles)
       if (uploadFiles.length <= 0) {
         alert("error")
       } else {
         const file = uploadFiles[0][0]
 
-        const { data } = await upload({
+        const { } = await upload({
           variables: { file },
-          fetchPolicy: "no-cache"
+
+          update(cache, { data }) {
+            cache.updateQuery<{ showImgs: ImgMutationResponse }>({ query: ImgsDocument, variables: { of: ImgOf.Product } }, (dataUpdate) => {
+              let newsImg;
+              if (dataUpdate?.showImgs.imgs) {
+                newsImg = {
+                  showImgs: {
+                    ...dataUpdate?.showImgs,
+                    imgs: data?.uploadImg.img ? [{ ...data?.uploadImg.img }, ...dataUpdate?.showImgs.imgs] : [...dataUpdate?.showImgs.imgs]
+                  }
+                }
+              }
+
+              if (data?.uploadImg.img) {
+                const setImg = data?.uploadImg.img
+                setDataImgs(imgs => [{ ...setImg, }, ...imgs])
+              }
+              return newsImg
+            })
+          }
+
         })
-        console.log(data?.uploadImg)
       }
+
+
 
     } catch (error) {
       console.log(error)
@@ -50,14 +69,14 @@ const ModalImgServer = ({ open, close, callbackImgValues }: Props) => {
   }
 
   const onSetFileUpload: ChangeEventHandler<HTMLInputElement> = (e) => {
-    console.log(e.target.files)
+    // console.log(e.target.files)
     e.target.files && e.target.files.length === 1 && setUploadFiles([e.target.files, ...uploadFiles])
   }
 
   const handleImg: HandleClickButton<InputMaybe<ImgOf>> = async (_, name) => {
-    console.log(name)
+    // console.log(name)
     const { data } = await imgs({ variables: { of: name } })
-    console.log(data?.showImgs.imgs)
+    // console.log(data?.showImgs.imgs)
     data?.showImgs.imgs && setDataImgs(data?.showImgs.imgs.map(img => ({ id: img.id, name: img.name, src: img.src })))
   }
 
@@ -87,12 +106,6 @@ const ModalImgServer = ({ open, close, callbackImgValues }: Props) => {
         <div className={cx("ctn-show-img")}>
           {loading && <h3>loading ...</h3>}
           {data?.uploadImg.fieldErrors && data.uploadImg.fieldErrors.length > 0 && <h3>{data.uploadImg.fieldErrors[0].message}</h3>}
-          {data?.uploadImg.img?.name && <Image
-            alt=""
-            loading={loading ? "lazy" : undefined}
-            src={data?.uploadImg.img?.src}
-            width={150} height={100}
-          />}
 
 
           {dataImgs && dataImgs.map(img => <ImgDetail callbackChooseImgs={setChooseImg} id={img.id} src={img.src} name={img.name} key={img.id} />)}

@@ -7,10 +7,7 @@ query Imgs($of: ImgOf) {
       ...fieldErrorInfo
     }
     imgs {
-      id
-      name
-      src
-      Of
+      ...imgInfo
     }
   }
 }

@@ -1,7 +1,5 @@
-import { NetworkStatus } from "@apollo/client"
 import classNames from "classnames/bind"
-import { useEffect, useRef, useState } from "react"
-import { ProductInfoFragment, ProductMutationResponse, Products, ProductsDocument, useProductsQuery } from "../../src/generated/graphql"
+import { ProductsDocument, useProductsQuery } from "../../src/generated/graphql"
 import { Button } from "../Lib/Button"
 import style from './product-category.module.scss'
 import ProductDetail from "./ProductDetail"
@@ -16,7 +14,7 @@ type Props = {
 // let products: ProductInfoFragment[] = []
 const ProductCategory = ({ categoryId, categoryName }: Props) => {
 
-  const { data, networkStatus, fetchMore, refetch } = useProductsQuery({
+  const { data, networkStatus, fetchMore } = useProductsQuery({
     variables: { categoryId, limit: 2 },
     notifyOnNetworkStatusChange: false,
     fetchPolicy: "network-only"

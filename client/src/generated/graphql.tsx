@@ -389,15 +389,15 @@ export type Users = {
 
 export type BrandInfoFragment = { __typename?: 'Brands', name: string, id: string };
 
-export type CategoryInfoFragment = { __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } };
+export type CategoryInfoFragment = { __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf } };
 
-export type CategoryMutationResponseFragment = { __typename?: 'CategoryMutationResponse', code: number, message: string, success: boolean, categories?: Array<{ __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null };
+export type CategoryMutationResponseFragment = { __typename?: 'CategoryMutationResponse', code: number, message: string, success: boolean, categories?: Array<{ __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf } }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null };
 
 export type FieldErrorInfoFragment = { __typename?: 'FieldError', name: string, message?: string | null, code?: string | null };
 
-export type ImgInfoFragment = { __typename?: 'Imgs', name: string, type: string, id: string, src: string };
+export type ImgInfoFragment = { __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf };
 
-export type ImgMutationResponseFragment = { __typename?: 'ImgMutationResponse', code: number, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, img?: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } | null };
+export type ImgMutationResponseFragment = { __typename?: 'ImgMutationResponse', code: number, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, img?: { __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf } | null };
 
 export type PaginationFragment = { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number };
 
@@ -405,11 +405,11 @@ export type PathInfoFragment = { __typename?: 'Paths', name: string, id: string 
 
 export type ProductAttributeInfoFragment = { __typename?: 'ProductAttributes', name: string, id: string, values: Array<{ __typename?: 'ProductValues', name: string, id: string }> };
 
-export type ProductInfoFragment = { __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } };
+export type ProductInfoFragment = { __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } };
 
-export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null };
+export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null };
 
-export type ProductOptionInfoFragment = { __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string }> };
+export type ProductOptionInfoFragment = { __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf }> };
 
 export type ProductPriceInfoFragment = { __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } };
 
@@ -443,7 +443,7 @@ export type UploadImgMutationVariables = Exact<{
 }>;
 
 
-export type UploadImgMutation = { __typename?: 'Mutation', uploadImg: { __typename?: 'ImgMutationResponse', code: number, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, img?: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } | null } };
+export type UploadImgMutation = { __typename?: 'Mutation', uploadImg: { __typename?: 'ImgMutationResponse', code: number, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, img?: { __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf } | null } };
 
 export type CategoryQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
@@ -451,7 +451,7 @@ export type CategoryQueryVariables = Exact<{
 }>;
 
 
-export type CategoryQuery = { __typename?: 'Query', categories: { __typename?: 'CategoryMutationResponse', code: number, message: string, success: boolean, categories?: Array<{ __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string } }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null } };
+export type CategoryQuery = { __typename?: 'Query', categories: { __typename?: 'CategoryMutationResponse', code: number, message: string, success: boolean, categories?: Array<{ __typename?: 'Categories', name: string, type: TypeCategories, id: string, img: { __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf } }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null } };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -463,7 +463,7 @@ export type ImgsQueryVariables = Exact<{
 }>;
 
 
-export type ImgsQuery = { __typename?: 'Query', showImgs: { __typename?: 'ImgMutationResponse', code: number, success: boolean, message: string, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, imgs?: Array<{ __typename?: 'Imgs', id: string, name: string, src: string, Of: ImgOf }> | null } };
+export type ImgsQuery = { __typename?: 'Query', showImgs: { __typename?: 'ImgMutationResponse', code: number, success: boolean, message: string, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, imgs?: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf }> | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -489,7 +489,7 @@ export type ProductsQueryVariables = Exact<{
 }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', productsByCategoryId: { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null } };
+export type ProductsQuery = { __typename?: 'Query', productsByCategoryId: { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string, attribute: { __typename?: 'ProductAttributes', name: string, id: string } }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number } | null } };
 
 export const BrandInfoFragmentDoc = gql`
     fragment brandInfo on Brands {
@@ -503,6 +503,7 @@ export const ImgInfoFragmentDoc = gql`
   type
   id
   src
+  Of
 }
     `;
 export const CategoryInfoFragmentDoc = gql`
@@ -881,14 +882,12 @@ export const ImgsDocument = gql`
       ...fieldErrorInfo
     }
     imgs {
-      id
-      name
-      src
-      Of
+      ...imgInfo
     }
   }
 }
-    ${FieldErrorInfoFragmentDoc}`;
+    ${FieldErrorInfoFragmentDoc}
+${ImgInfoFragmentDoc}`;
 
 /**
  * __useImgsQuery__

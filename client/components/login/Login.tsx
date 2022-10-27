@@ -27,7 +27,7 @@ const Login = ({ }: Props) => {
   const alert = useAlert()
   const route = useRouter()
   const [values, setValues] = useState<ValuesField>({ email: '', password: '' })
-  const [errors, setErrors] = useState<ErrorFieldInput[] | undefined>()
+  const [errors, setErrors] = useState<ErrorFieldInput[] | undefined | null>()
 
 
   const handleForm: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -36,23 +36,17 @@ const Login = ({ }: Props) => {
     const res = await login({
       variables: { loginInput: values },
       update(cache, { data }) {
-        // console.log(data?.login.code)
         if (data?.login.code === 200 && data.login.user) {
-          // console.log(data?.login.code === 200)
-          // console.log(data.login.user)
           cache.writeQuery<MeQuery>({
             query: MeDocument,
             data: { me: data.login.user }
           })
         }
-
       }
     })
     if (res.data?.login.code != 200 && res.data?.login.fieldErrors) {
-      // console.log(res.data?.login.fieldErrors)
 
-      setErrors(res.data?.login.fieldErrors)
-
+      setErrors(res.data?.login?.fieldErrors.map(error => ({ message: error.message ?? "", name: error.name })))
     }
     if (res.data?.login.code === 200) {
       setErrors(undefined)
