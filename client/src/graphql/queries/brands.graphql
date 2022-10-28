@@ -1,0 +1,13 @@
+query Brand {
+  showBrands {
+    code
+    message
+    success
+    fieldErrors {
+      ...fieldErrorInfo
+    }
+    brands {
+      ...brandInfo
+    }
+  }
+}

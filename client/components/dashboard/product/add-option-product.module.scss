@@ -1,5 +1,5 @@
 .wrapper {
-  background-color: var(--bg-3);
+  background-color: var(--bg-1);
   margin: 1rem 0;
   padding: 0.5rem;
   // border-radius: 12px;
@@ -17,7 +17,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    background-color: var(--bg-3);
+    background-color: var(--bg-2);
     padding: 0.5rem;
     border-radius: 12px;
   }
@@ -25,13 +25,28 @@
   .ctn-img {
     border-radius: 12px;
     padding: 1rem;
-    background-color: var(--bg-3);
+    background-color: var(--bg-2);
     margin-top: 1rem;
     .show-img {
       margin-top: 0.5rem;
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
+      .img-detail {
+        position: relative;
+        .close-img {
+          position: absolute;
+          z-index: 1;
+          width: 1.5rem;
+          display: flex;
+          height: 1.5rem;
+          overflow: hidden;
+          font-size: 1rem;
+          align-items: center;
+          justify-content: center;
+          right: 0;
+        }
+      }
     }
   }
   .ctn-submit-add {

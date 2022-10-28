@@ -326,6 +326,7 @@ export type Query = {
   productAttributes: ProductAttributeMutationResponse;
   productColors: ProductColorMutationResponse;
   productsByCategoryId: ProductMutationResponse;
+  showBrands: BrandMutationResponse;
   showImgs: ImgMutationResponse;
   showProducts: ProductMutationResponse;
 };
@@ -444,6 +445,11 @@ export type UploadImgMutationVariables = Exact<{
 
 
 export type UploadImgMutation = { __typename?: 'Mutation', uploadImg: { __typename?: 'ImgMutationResponse', code: number, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, img?: { __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf } | null } };
+
+export type BrandQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BrandQuery = { __typename?: 'Query', showBrands: { __typename?: 'BrandMutationResponse', code: number, message: string, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, brands?: Array<{ __typename?: 'Brands', name: string, id: string }> | null } };
 
 export type CategoryQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
@@ -804,6 +810,49 @@ export function useUploadImgMutation(baseOptions?: Apollo.MutationHookOptions<Up
 export type UploadImgMutationHookResult = ReturnType<typeof useUploadImgMutation>;
 export type UploadImgMutationResult = Apollo.MutationResult<UploadImgMutation>;
 export type UploadImgMutationOptions = Apollo.BaseMutationOptions<UploadImgMutation, UploadImgMutationVariables>;
+export const BrandDocument = gql`
+    query Brand {
+  showBrands {
+    code
+    message
+    success
+    fieldErrors {
+      ...fieldErrorInfo
+    }
+    brands {
+      ...brandInfo
+    }
+  }
+}
+    ${FieldErrorInfoFragmentDoc}
+${BrandInfoFragmentDoc}`;
+
+/**
+ * __useBrandQuery__
+ *
+ * To run a query within a React component, call `useBrandQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBrandQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBrandQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useBrandQuery(baseOptions?: Apollo.QueryHookOptions<BrandQuery, BrandQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BrandQuery, BrandQueryVariables>(BrandDocument, options);
+      }
+export function useBrandLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BrandQuery, BrandQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BrandQuery, BrandQueryVariables>(BrandDocument, options);
+        }
+export type BrandQueryHookResult = ReturnType<typeof useBrandQuery>;
+export type BrandLazyQueryHookResult = ReturnType<typeof useBrandLazyQuery>;
+export type BrandQueryResult = Apollo.QueryResult<BrandQuery, BrandQueryVariables>;
 export const CategoryDocument = gql`
     query Category($limit: Int, $cursor: DateTime) {
   categories(cursor: $cursor, limit: $limit) {

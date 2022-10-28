@@ -1,0 +1,1 @@
+export type GetValueChange = (name: string, attr?: string) => void

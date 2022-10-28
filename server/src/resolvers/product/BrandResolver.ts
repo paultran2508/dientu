@@ -6,7 +6,7 @@ import { BrandMutationResponse } from '../../types/mutations/BrandMutationRespon
 import { FieldError } from '../../types/mutations/FieldError';
 import { Brands } from '../../entities/Brands';
 import { createBaseResolver, TypeEntityExtension } from "../abstract/BaseResolver";
-import { Arg, Ctx, Mutation, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
 
 const BrandBaseResolver = createBaseResolver({ entity: Brands, name: "brand" })
 
@@ -27,6 +27,17 @@ export class BrandResolver extends BrandBaseResolver {
         return await source.save(Brands, { name: brand, img: Img })
       })
       return this._return({ brands: [Category] })
+    } catch (error) {
+      return this.catchQuery(error)
+    }
+  }
+
+  @Query(() => BrandMutationResponse)
+  async showBrands(): Promise<BrandMutationResponse> {
+    try {
+      return this._return({
+        brands: await Brands.find()
+      })
     } catch (error) {
       return this.catchQuery(error)
     }

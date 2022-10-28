@@ -1,20 +1,22 @@
 import classNames from "classnames/bind"
 import Image from "next/image"
 import { Dispatch, SetStateAction, useState } from "react"
-import { useProductAttributesQuery } from "../../../src/generated/graphql"
+import { ImgOf, useProductAttributesQuery } from "../../../src/generated/graphql"
+import { GetValueChange } from "../../../types/GetValueChange"
 import { Button } from "../../Lib/Button"
 import ModalImgServer, { GetChooseImgs } from "../../Lib/ImgServer/ModalImgServer"
 import { Input } from "../../Lib/Input"
 import SelectInput from "../../Lib/select"
 import { TypeSelectOption } from "../../Lib/select/SelectInput"
 import styled from "./add-option-product.module.scss"
+import { AddOptionByIndex } from "./DashboardProduct"
 import PriceOption from "./price"
 
 const cx = classNames.bind(styled)
 type Props = {
   categoryId: string,
-
-  callbackAddOption: Dispatch<SetStateAction<number[]>>
+  index: number,
+  setValueOption: setFormValues,
   option: number
 
 }
@@ -24,7 +26,7 @@ export type TypeSelectAttr = {
   options: TypeSelectOption[]
 }
 
-const AddOptionProduct = ({ categoryId, callbackAddOption, option }: Props) => {
+const AddOptionProduct = ({ categoryId, setValueOption, option, index }: Props) => {
   const [modal, setModal] = useState(false)
   const [addPrices, setAddPrices] = useState<number[]>([1])
   const { data } = useProductAttributesQuery({ variables: { categoryId } })
@@ -35,6 +37,16 @@ const AddOptionProduct = ({ categoryId, callbackAddOption, option }: Props) => {
 
   const onShowImgServer = () => {
     setModal(true)
+
+  }
+
+  const setValueOptionInput: GetValueChange = (value, attr) => {
+    setValueOption(values => {
+      attr
+      let options: AddOptionByIndex[] = values;
+      options[index].optionValues.name = value
+      return options
+    })
   }
 
   const addPriceOption = () => {
@@ -46,9 +58,9 @@ const AddOptionProduct = ({ categoryId, callbackAddOption, option }: Props) => {
 
   const handleCloseOption = () => {
     console.log(option)
-    callbackAddOption(options => options.filter(op => {
+    setValueOption(options => options.filter(op => {
       console.log(options)
-      return op !== option
+      return op.index !== option
     }))
   }
 
@@ -72,7 +84,7 @@ const AddOptionProduct = ({ categoryId, callbackAddOption, option }: Props) => {
           />)
         }
       </div>
-      <Input name="Tên Option" />
+      <Input attr="name" getValueChange={setValueOptionInput} name="Tên Option" />
       <div className={cx("ctn-price")}>
         {addPrices.map(price => <PriceOption callbackClose={setAddPrices} key={price} price={price} />)}
         <div className={cx("ctn-submit-add")}>
@@ -83,12 +95,15 @@ const AddOptionProduct = ({ categoryId, callbackAddOption, option }: Props) => {
       <div className={cx("ctn-img")}>
         <Button text="Thêm ảnh " handle={onShowImgServer} />
         <div className={cx("show-img")}>
-          {chooseImgs.map((img, index) => <Image alt="" width={150} height={100} key={index} src={img} />)}
+          {chooseImgs.map((img, index) => <div key={index} className={cx("img-detail")}>
+            <div onClick={() => {
+              setChooseImg(imgs => imgs.filter(i => i !== img))
+            }} className={cx("close-img")}><Button icon="close" /></div>
+            <Image alt="" width={150} height={100} key={index} src={img} />
+          </div>)}
         </div>
       </div>
-
-
-      <ModalImgServer callbackImgValues={getChooseImg} open={modal} close={setModal} />
+      <ModalImgServer of={ImgOf.Product} callbackImgValues={getChooseImg} open={modal} close={setModal} />
     </div>
   )
 }
