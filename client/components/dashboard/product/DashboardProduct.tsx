@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
-import { useEffect, useState } from 'react'
-import { AddProductInput, AddProductOptionInput, useBrandQuery, useCategoryQuery } from '../../../src/generated/graphql'
+import { useState } from 'react'
+import { useBrandQuery, useCategoryQuery } from '../../../src/generated/graphql'
 import { GetValueChange } from '../../../types/GetValueChange'
 import { Button } from '../../Lib/Button'
 import { Input } from '../../Lib/Input'
@@ -14,63 +14,70 @@ const cx = classNames.bind(styled)
 
 export type AddOptionByIndex = {
   index: number,
-  optionValues: AddProductOptionInput
+  optionValues: {
+    addImgs: string[];
+    addPrices: {}[];
+    name: string;
+    valueIds: {
+      name: string
+      id: string
+    }[];
+  },
 }
 
+export type FormValue = {
+  brandId: string
+  path: string
+  name: string
+  categoryId: string
+  optionValues: AddOptionByIndex[]
+
+}
 
 const DashboardProduct = ({ }: Props) => {
+
   const optionByOne: AddOptionByIndex = {
     index: 1,
-    optionValues: {
-      addImgs: [],
-      name: "",
-      valueIds: [],
-      addPrices: []
-    }
+    optionValues: { addImgs: [], name: "", valueIds: [], addPrices: [] }
   }
-  const [addOptions, setAddOptions] = useState<AddOptionByIndex[]>([optionByOne])
-  const [formValues, setFormValues] = useState<AddProductInput>({ addOptions: [], brandId: "", categoryId: "", name: "", path: "" })
 
-
-
-  // const [categoryId, setCategoryId] = useState<string | undefined>()
+  const [formValue, setFormValue] = useState<FormValue>({ optionValues: [], brandId: "", categoryId: "", name: "", path: "" })
   const { data: dataCategory } = useCategoryQuery()
   const { data: dataBrands } = useBrandQuery()
 
   const onSubmitForm = () => {
-    // setFormValues(formValues => ({ ...formValues, addOptions: addOptions.map(option => ({ ...option.optionValues })) }))
-    console.log(formValues)
+    console.log(formValue)
   }
-
 
   const setInputProductValue: GetValueChange = (input, attr) => {
-    attr && setFormValues(value => ({ ...value, [attr]: input }))
-    if (attr === "categoryId") {
-      addOptions.length === 0 && setAddOptions([optionByOne])
-      if (input !== "" && formValues.categoryId !== input) {
-        setAddOptions([optionByOne])
-      }
-    }
+    attr && setFormValue(value => ({ ...value, [attr]: input }))
+    attr === "categoryId" && input === "" && setFormValue(value => ({ ...value, optionValues: [] }))
+    attr === "categoryId" && input !== formValue.categoryId && setFormValue(value => ({ ...value, optionValues: [optionByOne] }))
   }
-
-
+  // console.log("render")
 
   const onAddOption = () => {
-    setAddOptions(options => {
-      return [...options, { index: options.slice(-1)[0].index + 1, optionValues: optionByOne.optionValues }]
+    formValue.categoryId !== "" && setFormValue(value => {
+
+      if (value.optionValues.length > 0) return {
+        ...value,
+        optionValues: [...value.optionValues,
+        {
+          index: value.optionValues.slice(-1)[0].index + 1, optionValues: { ...optionByOne.optionValues }
+        }]
+      }
+      return { ...value, optionValues: [optionByOne] }
     })
-
-    addOptions.length === 0 && setAddOptions([optionByOne])
+    formValue.categoryId === "" && setFormValue(value => ({ ...value, optionValues: [] }))
   }
-
 
   return (
     <div className={cx("wrapper")}>
       <h1>Thêm Sản Phẩm</h1>
       <div className={cx("ctn-option")}>
         <div className={cx("category-select")}>
-          <Input attr="name" getValueChange={setInputProductValue} width='400px' name='Tên Sản Phẩm ' />
-          <Input attr="path" getValueChange={setInputProductValue} width='400px' name='Đường dẫn ' />
+          <Input value="" attr="name" getValueChange={setInputProductValue} width='400px' name='Tên Sản Phẩm ' />
+          <Input value="" attr="path" getValueChange={setInputProductValue} width='400px' name='Đường dẫn ' />
           {dataBrands?.showBrands.brands &&
             <SelectInput
               all
@@ -88,15 +95,14 @@ const DashboardProduct = ({ }: Props) => {
               options={dataCategory.categories.categories.map(value => ({ name: value.name, value: value.id }))}
             />}
         </div>
-        { }
         <div className={cx('ctn-option')}>
           <div className={cx("option")}>
-            {addOptions.length > 0 && formValues.categoryId !== "" && addOptions.map((op, index) =>
+            {formValue?.optionValues?.length > 0 && formValue?.categoryId !== "" && formValue.optionValues.map((option) =>
               <AddOptionProduct
-                index={index}
-                setValueOption={setFormValues}
-                option={op.index} key={op.index}
-                categoryId={formValues.categoryId}
+                index={option.index}
+                setFormValue={setFormValue}
+                key={option.index}
+                categoryId={formValue.categoryId}
               />
             )}
           </div>

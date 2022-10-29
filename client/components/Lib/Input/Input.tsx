@@ -24,8 +24,8 @@ const Input = ({ name, value, type, width, getValueChange, attr }: Props) => {
   return (
     <div style={{ width: width ?? "100%" }} className={cx('wrapper')}>
       <input type={type} className={cx("input")} placeholder=" " onChange={(e) => {
-        getValueChange && getValueChange(e.target.value, attr)
         setValueInput(e.target.value)
+        getValueChange && getValueChange(e.target.value, attr)
       }} value={valueInput} />
       <label className={cx("label")} > {name} :</label>
 

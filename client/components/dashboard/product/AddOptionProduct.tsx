@@ -1,6 +1,6 @@
 import classNames from "classnames/bind"
 import Image from "next/image"
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, memo, SetStateAction, useState } from "react"
 import { ImgOf, useProductAttributesQuery } from "../../../src/generated/graphql"
 import { GetValueChange } from "../../../types/GetValueChange"
 import { Button } from "../../Lib/Button"
@@ -9,15 +9,14 @@ import { Input } from "../../Lib/Input"
 import SelectInput from "../../Lib/select"
 import { TypeSelectOption } from "../../Lib/select/SelectInput"
 import styled from "./add-option-product.module.scss"
-import { AddOptionByIndex } from "./DashboardProduct"
+import { FormValue } from "./DashboardProduct"
 import PriceOption from "./price"
 
 const cx = classNames.bind(styled)
 type Props = {
   categoryId: string,
   index: number,
-  setValueOption: setFormValues,
-  option: number
+  setFormValue: Dispatch<SetStateAction<FormValue>>,
 
 }
 
@@ -26,42 +25,46 @@ export type TypeSelectAttr = {
   options: TypeSelectOption[]
 }
 
-const AddOptionProduct = ({ categoryId, setValueOption, option, index }: Props) => {
+const AddOptionProduct = ({ categoryId, setFormValue, index }: Props) => {
   const [modal, setModal] = useState(false)
   const [addPrices, setAddPrices] = useState<number[]>([1])
   const { data } = useProductAttributesQuery({ variables: { categoryId } })
   const [chooseImgs, setChooseImg] = useState<string[]>([])
 
-
-  // console.log(selects)
-
   const onShowImgServer = () => {
     setModal(true)
-
   }
 
-  const setValueOptionInput: GetValueChange = (value, attr) => {
-    setValueOption(values => {
-      attr
-      let options: AddOptionByIndex[] = values;
-      options[index].optionValues.name = value
-      return options
+  const setOptionValue: GetValueChange = (input, attr, name) => {
+    console.log("render")
+    setFormValue(value => {
+      value.optionValues[0].optionValues.valueIds
+      let options = value.optionValues
+      const number = options.findIndex(option => option.index === index)
+      console.log(number)
+      attr === "name" && (options[number].optionValues.name = input);
+      if (name && attr === "valueIds") {
+        const valueIds = options[number].optionValues.valueIds
+        const numberValue = valueIds.findIndex(attribute => attribute.name === name)
+        console.log(numberValue)
+        if (numberValue === -1) {
+          options[number].optionValues.valueIds.push({ id: input, name })
+        } else {
+          options[number].optionValues.valueIds[numberValue].id = input
+          options[number].optionValues.valueIds[numberValue].name = name
+        }
+      }
+      return { ...value, optionValues: options }
     })
   }
 
   const addPriceOption = () => {
     addPrices.length > 0 && setAddPrices(prices => [...prices, prices.slice(-1)[0] + 1])
     addPrices.length === 0 && setAddPrices([1])
-
-
   }
 
   const handleCloseOption = () => {
-    console.log(option)
-    setValueOption(options => options.filter(op => {
-      console.log(options)
-      return op.index !== option
-    }))
+    setFormValue(value => ({ ...value, optionValues: value.optionValues.filter(option => option.index !== index) }))
   }
 
   const getChooseImg: GetChooseImgs = (imgs) => {
@@ -72,26 +75,27 @@ const AddOptionProduct = ({ categoryId, setValueOption, option, index }: Props) 
     <div className={cx("wrapper")}>
       <div className={cx("close")}>
         <Button handle={handleCloseOption} icon="close" />
-
       </div>
-      <h2>{"Option " + option}</h2>
+      <h2>{"Option " + `${index}`}</h2>
       <div className={cx("ctn-select")}>
         {data?.productAttributes.attributes && data?.productAttributes.attributes.map(attrs =>
           <SelectInput
+            all
+            getValueChange={setOptionValue}
+            attr="valueIds"
             name={attrs.name}
             key={attrs.id}
             options={attrs.values.map(value => ({ name: value.name, value: value.id }))}
           />)
         }
       </div>
-      <Input attr="name" getValueChange={setValueOptionInput} name="Tên Option" />
+      <Input attr="name" value="" getValueChange={setOptionValue} name="Tên Option" />
       <div className={cx("ctn-price")}>
         {addPrices.map(price => <PriceOption callbackClose={setAddPrices} key={price} price={price} />)}
         <div className={cx("ctn-submit-add")}>
           <Button text="Thêm gía bán " handle={addPriceOption} />
         </div>
       </div>
-
       <div className={cx("ctn-img")}>
         <Button text="Thêm ảnh " handle={onShowImgServer} />
         <div className={cx("show-img")}>
@@ -108,4 +112,4 @@ const AddOptionProduct = ({ categoryId, setValueOption, option, index }: Props) 
   )
 }
 
-export default AddOptionProduct
+export default memo(AddOptionProduct)
