@@ -10,7 +10,7 @@ type Props = {
   value?: string,
   type?: "number" | "text" | "password",
   width?: string
-  getValueChange?: GetValueChange,
+  getValueChange?: GetValueChange<string>,
   attr?: string
 
 }
@@ -25,7 +25,7 @@ const Input = ({ name, value, type, width, getValueChange, attr }: Props) => {
     <div style={{ width: width ?? "100%" }} className={cx('wrapper')}>
       <input type={type} className={cx("input")} placeholder=" " onChange={(e) => {
         setValueInput(e.target.value)
-        getValueChange && getValueChange(e.target.value, attr)
+        getValueChange && getValueChange(e.target.value, attr, name)
       }} value={valueInput} />
       <label className={cx("label")} > {name} :</label>
 

@@ -26,7 +26,7 @@ export type ButtonProps<T> = {
 
 function Button<T>({ icon, text, link, handle, loading, fullWidth, submit, data }: ButtonProps<T>) {
 
-
+  // 
 
   const buttonEl: React.ReactNode = <button
     type={submit ? 'submit' : 'button'}

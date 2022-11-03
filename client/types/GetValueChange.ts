@@ -1,1 +1,1 @@
-export type GetValueChange = (value: string, attr?: string, name?: string) => void
+export type GetValueChange<T> = (value: T, attr?: string, name?: string) => void

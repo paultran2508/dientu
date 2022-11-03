@@ -12,7 +12,7 @@ type Props = {
   options: TypeSelectOption[]
   all?: boolean,
   attr?: string,
-  getValueChange?: GetValueChange
+  getValueChange?: GetValueChange<string>
 }
 
 export type TypeSelectOption = { value: string, name: string }

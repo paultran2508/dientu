@@ -2,13 +2,12 @@
   background-color: var(--bg-1);
   margin: 1rem 0;
   padding: 0.5rem;
-  // border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+
   position: relative;
-  // border: 1px solid;
-  // overflow: hidden;
   .ctn-select {
     display: flex;
-    // border: 1px solid;
     margin: 1rem 0;
     gap: 1rem;
   }
@@ -16,10 +15,14 @@
     margin: 1rem 0;
     display: flex;
     flex-wrap: wrap;
+    width: 570px;
+    // justify-content: center;
+
     gap: 0.5rem;
     background-color: var(--bg-2);
     padding: 0.5rem;
     border-radius: 12px;
+    // border: 1px solid;
   }
 
   .ctn-img {
