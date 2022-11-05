@@ -29,6 +29,7 @@
     "react-alert-template-mui": "^1.0.7",
     "react-dom": "18.2.0",
     "react-router-dom": "^6.3.0",
+    "react-table": "^7.8.0",
     "sass": "^1.53.0",
     "styled-components": "^5.3.5"
   },
@@ -44,6 +45,7 @@
     "@types/react-alert": "^7.0.2",
     "@types/react-dom": "18.0.6",
     "@types/react-router-dom": "^5.3.3",
+    "@types/react-table": "^7.7.12",
     "@types/styled-components": "^5.1.25",
     "eslint": "8.19.0",
     "eslint-config-next": "12.2.1",

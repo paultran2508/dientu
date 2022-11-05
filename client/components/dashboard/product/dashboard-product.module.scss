@@ -1,26 +1,6 @@
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  .category-select {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin: 0.5rem 0;
-  }
-  h1 {
-    color: var(--primary-2);
-  }
-
-  .ctn-option {
-    .option {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-  }
-  .ctn-button {
-    margin-top: 1rem;
-    gap: 2rem;
-    display: flex;
+  .show-product-table {
+    margin: 1rem 0;
+    border: 1px solid;
   }
 }

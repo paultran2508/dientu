@@ -6,6 +6,7 @@
   flex-direction: column;
 
   position: relative;
+
   .ctn-select {
     display: flex;
     margin: 1rem 0;
@@ -15,14 +16,15 @@
     margin: 1rem 0;
     display: flex;
     flex-wrap: wrap;
-    width: 570px;
-    // justify-content: center;
-
+    width: 550px;
     gap: 0.5rem;
     background-color: var(--bg-2);
     padding: 0.5rem;
     border-radius: 12px;
     // border: 1px solid;
+    button {
+      font-size: 1rem;
+    }
   }
 
   .ctn-img {

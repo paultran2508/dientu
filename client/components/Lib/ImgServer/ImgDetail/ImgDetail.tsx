@@ -21,7 +21,7 @@ const ImgDetail = ({ id, name, src, callbackChooseImgs }: Props) => {
 
   const handleCallbackImg = () => {
     setSelectImg(select => !select)
-    console.log(selectImg)
+    // console.log(selectImg)
     !selectImg && callbackChooseImgs && callbackChooseImgs(imgs => imgs.concat([src]))
     selectImg && callbackChooseImgs && callbackChooseImgs(imgs => imgs.filter(img => img !== src))
 

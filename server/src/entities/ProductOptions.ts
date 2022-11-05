@@ -44,7 +44,7 @@ export class ProductOptions extends BaseEntity {
   condition: Condition
 
   @Field(_type => [ProductValues])
-  @ManyToMany(() => ProductValues)
+  @ManyToMany(() => ProductValues, { cascade: true })
   @JoinTable()
   values: ProductValues[]
 }

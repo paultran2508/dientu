@@ -26,7 +26,6 @@ export class HandleErrorResponse extends QueryFailedError {
 
   constructor(setErrors: FieldError[] = [], error: QueryFailedError | undefined = undefined) {
     super(error?.query ?? "", error?.parameters ?? [], error?.driverError ?? error)
-    // console.log("dau", error?.driverError, setErrors, "cuoi")
     if (this.driverError.code === "23505") this.unique()
     if (this.driverError.code === "404") this.notfound()
     if (setErrors.length > 0) this.getFieldErrors = setErrors

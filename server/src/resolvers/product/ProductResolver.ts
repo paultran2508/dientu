@@ -1,5 +1,5 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
-import { DeepPartial, LessThan } from 'typeorm';
+import { LessThan } from 'typeorm';
 import { Paths } from '../../entities/Paths';
 import { ProductColors } from '../../entities/ProductColors';
 import { Products } from '../../entities/Products';
@@ -8,7 +8,7 @@ import { ProductMutationResponse } from '../../types/mutations/ProductMutationRe
 import { createBaseResolver, TypeEntityExtension } from '../abstract/BaseResolver';
 import { Brands } from './../../entities/Brands';
 import { Categories } from './../../entities/Categories';
-import { ImgOf, Imgs, ImgType } from './../../entities/Imgs';
+import { Imgs } from './../../entities/Imgs';
 import { Condition, ProductOptions } from './../../entities/ProductOptions';
 import { PriceType, ProductPrices } from './../../entities/ProductPrices';
 import { ProductValues } from './../../entities/ProductValues';
@@ -40,16 +40,16 @@ export class ProductResolver extends ProductsBaseResolver {
 
   @Query(_return => ProductMutationResponse)
   async productsByCategoryId(
-    @Arg('categoryId') categoryId: string,
+    @Arg('categoryId', { nullable: true }) categoryId?: string,
     @Arg('cursor', _type => Date, { nullable: true }) cursor?: Date,
     @Arg('limit', _type => Int, { nullable: true }) limit?: number
   ): Promise<ProductMutationResponse> {
     try {
       const realLimit: number = !limit || (limit > 5) ? 5 : limit
-      console.log(LessThan(cursor))
+      // console.log(LessThan(cursor))
       const totalCount = await Products.count({ where: { categoryId: categoryId } })
       const products = await Products.find({
-        relations: ["category", "path", "options.prices", "options.imgs", "brand"],
+        relations: ["category", "path", "options.prices.color", "options.values", "options.imgs", "brand"],
         where: {
           category: { id: categoryId },
           createAt: cursor ? LessThan(cursor) : cursor,
@@ -86,21 +86,19 @@ export class ProductResolver extends ProductsBaseResolver {
           entity: Products,
           values: [{
             name,
-            brand: (await this.addEntity({ entity: Brands, findIds: [{ id: brandId }] }))[0],
-            category: (await this.addEntity({ entity: Categories, findIds: [{ id: categoryId }] }))[0],
+            brand: (await this.addEntity({ entity: Brands, findIds: [{ id: brandId }], error: { message: "lỗi không tồn tại", name: "thương hiệu" } })
+            )[0],
+            category: (await this.addEntity({ entity: Categories, findIds: [{ id: categoryId }], error: { message: "lỗi không tồn tại", name: "danh mục" } }))[0],
             path: (await this.addEntity({ entity: Paths, values: [{ name: path }] }))[0],
             options: await this.addEntity({
               entity: ProductOptions,
               values: await Promise.all(addOptions.map(async option => {
                 return {
                   name: option.name,
-                  imgs: await this.addEntity({
-                    entity: Imgs, values: option.addImgs.map<DeepPartial<Imgs>>(img => ({
-                      name: img.img,
-                      type: ImgType.JPG,
-                      Of: ImgOf.PRODUCT
-                    }))
-                  }),
+                  imgs: (await this.addEntity({
+                    entity: Imgs,
+                    findIds: option.addImgs.map(img => ({ src: img.img }))
+                  })),
                   condition: Condition.STOKING,
                   prices: await this.addEntity({
                     entity: ProductPrices,
@@ -130,9 +128,10 @@ export class ProductResolver extends ProductsBaseResolver {
       })
 
 
-
+      console.log(dataProducts[0].options[0].values[0].name)
       return this._return({ products: dataProducts })
     } catch (error) {
+
       return this.catchQuery(error)
     }
   }

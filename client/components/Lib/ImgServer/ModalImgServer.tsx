@@ -21,13 +21,16 @@ const ModalImgServer = ({ open, close, callbackImgValues, of }: Props) => {
   const [dataImgs, setDataImgs] = useState<{} & { name: string, src: string, id: string }[]>([])
   const [chooseImgs, setChooseImg] = useState<string[]>([])
   const [upload, { loading, data }] = useUploadImgMutation()
-  const [imgs] = useImgsLazyQuery()
+  const [imgs, { data: dataQueryImgs }] = useImgsLazyQuery()
 
-  const loadImgServer = async (typeOf: ImgOf) => {
-    const { data } = await imgs({ variables: { of: typeOf } })
-    data?.showImgs.imgs && setDataImgs(data?.showImgs.imgs.map(img => ({ id: img.id, name: img.name, src: img.src })))
-  }
-  useEffect(() => { of && loadImgServer(of) }, [])
+
+  useEffect(() => {
+    const loadImgServer = async (typeOf: ImgOf) => {
+      await imgs({ variables: { of: typeOf } })
+      dataQueryImgs?.showImgs.imgs && setDataImgs(dataQueryImgs?.showImgs.imgs.map(img => ({ id: img.id, name: img.name, src: img.src })))
+    }
+    of && loadImgServer(of)
+  }, [dataQueryImgs, of, imgs])
 
   const onUploadImg = async () => {
     try {

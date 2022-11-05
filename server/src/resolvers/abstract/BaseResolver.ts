@@ -24,6 +24,7 @@ type ReturnEntity<Entity> = {
   entity: EntityTarget<Entity>,
   values?: DeepPartial<Entity>[]
   findIds?: FindOptionsWhere<Entity>[],
+  error?: { name: string, message: string }
 }
 
 
@@ -60,9 +61,10 @@ export function createBaseResolver<T>({ entity }: TypeBaseResolver<T>) {
     }
 
     catchQuery(error: any): IMutationResponse & { fieldErrors: FieldError[] } {
-      console.log(this.setErrors)
+
       const resultError = new HandleErrorResponse(this.setErrors, error)
       this.setErrors = []
+      // console.log(this.setErrors)
       return {
         code: 100,
         message: "error base",
@@ -71,36 +73,49 @@ export function createBaseResolver<T>({ entity }: TypeBaseResolver<T>) {
       }
     }
 
-    async returnEntity<Entity>({ entity, values, findIds }: ReturnEntity<Entity>): Promise<Entity> {
-      if (values) { return await this.source.save(entity, values[0]) }
-      let dataEntity: Entity | null = null
-      findIds && (dataEntity = await this.source.findOneBy(entity, findIds))
-      if (dataEntity) return dataEntity
-      this.setErrors.push({ message: `notfound ${entity.constructor.name}`, code: "404", name: entity.constructor.name })
-      throw new HandleErrorResponse()
+    async returnEntity<Entity>({ entity, values, findIds, error }: ReturnEntity<Entity>): Promise<Entity> {
+
+      try {
+
+        if (values) { return await this.source.save(entity, values[0]) }
+        let dataEntity: Entity | null = null
+        findIds && (dataEntity = await this.source.findOneBy(entity, findIds))
+        if (dataEntity) return dataEntity
+        // console.log({ message: error?.message, code: "123", name: error?.name ?? "aa" })
+        throw new HandleErrorResponse()
+
+      } catch (e) {
+        this.setErrors.push({ message: error?.message, code: "123", name: error?.name ?? "aa" })
+        throw new HandleErrorResponse()
+      }
+
+
+
     }
 
 
 
 
-    async addEntity<Entity>({ entity, values, findIds }: ReturnEntity<Entity>): Promise<Entity[]> {
+    async addEntity<Entity>({ entity, values, findIds, error }: ReturnEntity<Entity>): Promise<Entity[]> {
       let dataEntities: Entity[] | null = []
-      values && values.length > 0 && (dataEntities = await this.source.save(entity, values));
-      // values && values.length <= 0 && this.returnCatch("404", entity.constructor.name)
 
+      values && values.length > 0 && (dataEntities = await this.source.save(entity, values));
       if (findIds) {
+
         for (const id of findIds) {
-          id && dataEntities.push(await this.returnEntity({ entity, findIds: [id] }))
+          id && dataEntities.push(await this.returnEntity({ entity, findIds: [id], error }))
         }
       }
       // console.log(dataEntities)
       if (dataEntities) return dataEntities
-      throw this.returnCatch("404", entity.constructor.name)
+
+      throw this.returnCatch("404", entity.constructor.name, "", error)
 
     }
 
-    returnCatch(code: string, name: string, message?: string): HandleErrorResponse {
-      this.setErrors.push({ message, name, code })
+    returnCatch(code: string, name: string, message?: string, error?: { name: string, message: string }): HandleErrorResponse {
+      this.setErrors.push({ message: error?.message ?? message, name: error?.name ?? name, code })
+      console.log(1)
       throw new HandleErrorResponse()
     }
 
