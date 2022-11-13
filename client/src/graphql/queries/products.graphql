@@ -1,5 +1,12 @@
-query Products($limit: Int, $cursor: DateTime, $categoryId: String) {
-  productsByCategoryId(categoryId: $categoryId, cursor: $cursor, limit: $limit) {
+query Products($limit: Int, $cursor: DateTime, $categoryId: String, $hasMore: Boolean!, $sort: SortInput, $skip: Int) {
+  productsByCategoryId(
+    categoryId: $categoryId
+    cursor: $cursor
+    limit: $limit
+    hasMore: $hasMore
+    sort: $sort
+    skip: $skip
+  ) {
     ...productMutationResponse
   }
 }

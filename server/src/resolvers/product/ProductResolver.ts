@@ -1,5 +1,5 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
-import { LessThan } from 'typeorm';
+import { FindOptionsOrder, LessThan } from 'typeorm';
 import { Paths } from '../../entities/Paths';
 import { ProductColors } from '../../entities/ProductColors';
 import { Products } from '../../entities/Products';
@@ -14,6 +14,7 @@ import { PriceType, ProductPrices } from './../../entities/ProductPrices';
 import { ProductValues } from './../../entities/ProductValues';
 import { checkAuth } from './../../middleware/checkAuth';
 import { AddProductInput } from './../../types/inputs/addProductInput';
+import { SortInput } from './../../types/inputs/SortInput';
 import { FieldError } from './../../types/mutations/FieldError';
 
 export const ProductsBaseResolver = createBaseResolver({ name: 'product', entity: Products })
@@ -40,35 +41,48 @@ export class ProductResolver extends ProductsBaseResolver {
 
   @Query(_return => ProductMutationResponse)
   async productsByCategoryId(
+    @Arg('hasMore', _type => Boolean) hasMore: boolean,
     @Arg('categoryId', { nullable: true }) categoryId?: string,
     @Arg('cursor', _type => Date, { nullable: true }) cursor?: Date,
-    @Arg('limit', _type => Int, { nullable: true }) limit?: number
+    @Arg('limit', _type => Int, { nullable: true }) limit?: number,
+    @Arg('sort', _type => SortInput, { nullable: true }) sort?: SortInput,
+    @Arg('skip', _type => Int, { nullable: true }) skip?: number,
   ): Promise<ProductMutationResponse> {
     try {
-      const realLimit: number = !limit || (limit > 5) ? 5 : limit
-      // console.log(LessThan(cursor))
+      const realLimit: number = !limit || (limit > 50) ? 50 : limit
       const totalCount = await Products.count({ where: { categoryId: categoryId } })
-      const products = await Products.find({
-        relations: ["category", "path", "options.prices.color", "options.values", "options.imgs", "brand"],
-        where: {
-          category: { id: categoryId },
-          createAt: cursor ? LessThan(cursor) : cursor,
-          // name: "Xiaomi 1111"
-        },
-        order: { createAt: "DESC" },
-        take: realLimit,
-      })
+      let products: Products[] = [];
+      let order: FindOptionsOrder<Products>;
+
+      order = sort ? { [sort.name]: sort.sort } : { createAt: -1 };
+      if (sort?.name == "brand") {
+        order = { brand: { name: sort.sort } }
+      }
+
+      if (hasMore) {
+        products = await Products.find({
+          relations: ["category", "path", "options.prices.color", "options.values", "options.imgs", "brand"],
+          where: {
+            category: { id: categoryId },
+            createAt: cursor ? LessThan(cursor) : cursor,
+          },
+          order,
+          skip,
+          take: realLimit,
+        })
+      }
+      console.log(sort)
       return this._return({
         products,
         categoryId: categoryId,
         pagination: {
           cursor: products.length > 0 ? products.slice(-1)[0].createAt : undefined,
           totalCount,
-          hasMore: products.length > 0 ? true : false
+          hasMore: products.length > 0 ? true : false,
+          skip: skip,
         }
       })
     } catch (error) {
-      console.log(error)
       return { ...this.catchQuery(error) }
     }
   }
@@ -128,7 +142,7 @@ export class ProductResolver extends ProductsBaseResolver {
       })
 
 
-      console.log(dataProducts[0].options[0].values[0].name)
+      // console.log(dataProducts)
       return this._return({ products: dataProducts })
     } catch (error) {
 

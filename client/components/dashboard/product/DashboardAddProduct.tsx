@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind'
-import { Dispatch, SetStateAction, useReducer } from 'react'
+import { useReducer } from 'react'
 import { useAlert } from 'react-alert'
 import { AddProductInput, Exact, useAddProductMutation, useBrandQuery, useCategoryQuery } from '../../../src/generated/graphql'
 import { GetValueChange } from '../../../types/GetValueChange'
@@ -11,7 +11,7 @@ import styled from "./dashboard-add-product.module.scss"
 import { AddFormValue, addOptionValue, AddOptionValue, fomValueInit, reducer, removeOptionValueByIndexInit, setAddPriceValueAction, setFormValue, setOptionValueAction } from './init'
 
 type Props = {
-  callbackShowAddProduct: Dispatch<SetStateAction<boolean>>
+  callbackShowAddProduct: () => void
 }
 const cx = classNames.bind(styled)
 
@@ -22,7 +22,8 @@ const DashboardAddProduct = ({ callbackShowAddProduct }: Props) => {
   const { data: dataBrands } = useBrandQuery()
   const [addProductMutation, { data: dataProductMutation }] = useAddProductMutation()
   const { error, success } = useAlert()
-  // console.log(called, dataProductMutation)
+
+  console.log(dataCategory)
 
   const onSubmitForm = async () => {
     const variables: Exact<{ productOptionInput: AddProductInput; }> = {
@@ -43,9 +44,9 @@ const DashboardAddProduct = ({ callbackShowAddProduct }: Props) => {
       }
     };
     const { data } = await addProductMutation({ variables })
-    // console.log(called, dataProductMutation)
+    // console.log(data)
     if (data?.addProduct.success) {
-      callbackShowAddProduct(false)
+      callbackShowAddProduct()
       success("Tạo sản phẩm thành công")
     } else {
       data?.addProduct.fieldErrors && data?.addProduct.fieldErrors?.length > 0 && error(data?.addProduct.fieldErrors[0].message)
@@ -79,14 +80,11 @@ const DashboardAddProduct = ({ callbackShowAddProduct }: Props) => {
           <>
             <h3>
               name:  {dataProductMutation?.addProduct.fieldErrors[0]?.name}
-
             </h3>
             <h3>
               message:  {dataProductMutation?.addProduct.fieldErrors[0]?.message}
-
             </h3>
           </>
-
         }
       </div>
       <div className={cx("ctn-option")}>
@@ -122,7 +120,8 @@ const DashboardAddProduct = ({ callbackShowAddProduct }: Props) => {
         <div className={cx('ctn-option')}>
           <div className={cx("option")}>
             {formValue?.optionValues?.length > 0 &&
-              formValue?.categoryId !== "" && formValue.optionValues.map((option, id) => {
+              formValue?.categoryId !== "" &&
+              formValue.optionValues.map((option, id) => {
                 return (<AddOptionProduct
                   optionValue={option}
                   indexInit={option.indexInit}

@@ -29,6 +29,8 @@ const Login = ({ }: Props) => {
   const [values, setValues] = useState<ValuesField>({ email: '', password: '' })
   const [errors, setErrors] = useState<ErrorFieldInput[] | undefined | null>()
 
+  // console.log(error)
+
 
   const handleForm: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
@@ -45,15 +47,17 @@ const Login = ({ }: Props) => {
       }
     })
     if (res.data?.login.code != 200 && res.data?.login.fieldErrors) {
-
       setErrors(res.data?.login?.fieldErrors.map(error => ({ message: error.message ?? "", name: error.name })))
     }
+
+
     if (res.data?.login.code === 200) {
       setErrors(undefined)
       alert.success('đăng nhập thành công')
       route.push('/')
     }
   }
+
   const handleValue: HandleValueField = (value, fieldName) => {
     setValues(changeValues => ({ ...changeValues, [fieldName]: value }))
   }

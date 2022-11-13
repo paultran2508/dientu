@@ -8,4 +8,6 @@ export class Pagination {
   hasMore: boolean
   @Field(_type => Date, { nullable: true })
   cursor?: Date
+  @Field()
+  skip?: number
 }

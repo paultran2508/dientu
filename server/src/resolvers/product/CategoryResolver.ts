@@ -36,10 +36,12 @@ export class CategoryResolver extends CategoryBase {
     })
     console.log(categories)
     return this._return({
-      categories, pagination: {
+      categories,
+      pagination: {
         cursor: categories.length > 0 ? categories.slice(-1)[0].createAt : undefined,
         hasMore: categories.length > 0 ? true : false,
-        totalCount
+        totalCount,
+        skip: 0
       }
     })
   }

@@ -29,7 +29,7 @@ const Register = ({ }: Props) => {
   const alert = useAlert()
   const route = useRouter()
   const [values, setValues] = useState<ValuesField>({ email: '', password: '', rePassword: "" })
-  const [errors, setErrors] = useState<ErrorFieldInput[] | undefined>()
+  const [errors, setErrors] = useState<ErrorFieldInput[] | undefined | null>()
 
 
 
@@ -45,8 +45,9 @@ const Register = ({ }: Props) => {
     })
     if (res.data?.register.code != 200 && res.data?.register.fieldErrors) {
       // console.log(res.data?.register.fieldErrors)
+      const fieldErrors: ErrorFieldInput[] = res.data.register.fieldErrors.map(error => ({ message: error.name ?? "", name: error.message ?? "" }))
 
-      setErrors(res.data.register.fieldErrors)
+      setErrors(fieldErrors)
 
     }
     if (res.data?.register.code === 200) {
@@ -84,7 +85,7 @@ const Register = ({ }: Props) => {
         <div className={cx('action')}>
           {loading ? <Button text="loading" /> : <Button submit text="Đăng ký" />}
 
-          <Link href={'/register'} >đăng nhập</Link>
+          <Link href={'/login'} >đăng nhập</Link>
 
         </div>
 
