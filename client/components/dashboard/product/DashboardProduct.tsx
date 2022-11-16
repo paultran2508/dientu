@@ -1,13 +1,13 @@
 import classNames from "classnames/bind"
 import React, { useEffect, useState } from "react"
-import { ProductAttributeMutationResponse, ProductMutationResponse, ProductMutationResponseFragment, ProductsQuery, useDeleteProductMutation, useProductsLazyQuery } from "../../../src/generated/graphql"
+import { ProductMutationResponse, useDeleteProductMutation, useProductsLazyQuery } from "../../../src/generated/graphql"
 import { Button, HandleClickButton } from "../../Lib/Button"
 import Modal from "../../Lib/Modal"
 import Table from "../../table"
 import DashboardLayout from "../DashboardLayout"
-import AddProductValue from "./AddProductValue"
 import style from "./dashboard-product.module.scss"
 import DashboardAddProduct from "./DashboardAddProduct"
+import AddProductValue from "./AddProductValue"
 
 const cx = classNames.bind(style)
 type Props = {}

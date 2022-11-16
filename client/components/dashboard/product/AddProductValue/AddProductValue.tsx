@@ -1,31 +1,29 @@
 import classNames from "classnames/bind"
 import { useEffect, useState } from "react"
-import { useAddProductValueMutation, useCategoryQuery, useProductAttributesLazyQuery } from "../../../../src/generated/graphql"
+import { ProductAttributeInfoFragmentDoc, ProductAttributesDocument, ProductValueInfoFragmentDoc, useCategoryQuery, useDeleteProductValueByAttributeMutation, useProductAttributesLazyQuery } from "../../../../src/generated/graphql"
 import { GetValueChange } from "../../../../types/GetValueChange"
 import { Button, HandleClickButton } from "../../../Lib/Button"
-import { Input } from "../../../Lib/Input"
 import SelectInput from "../../../Lib/select"
 import Table from "../../../table"
 import style from "./add-product-value.module.scss"
+import AddValueByAttribute from "./AddValueByAttribute"
 
 const cx = classNames.bind(style)
 
-type InputAddProductValue = {
-  attributeId: string
-  value: string
-}
+
 
 type Props = {
-  // categoryId: string
 }
 
 type TypeAttributeTable = {
   Stt: number,
   "Thuộc tính": string,
   "Giá trị": React.ReactNode,
-  "Thêm Giá trị": React.ReactNode
+  // "Thêm Giá trị": React.ReactNode
 }
-let nameCategory: string = "";
+
+
+
 
 const AddProductValue = ({ }: Props) => {
 
@@ -33,32 +31,59 @@ const AddProductValue = ({ }: Props) => {
   const { data: dataCategory } = useCategoryQuery()
   const [dataTable, setDataTable] = useState<TypeAttributeTable[]>()
   const [nameCategory, setNameCategory] = useState<string>("")
-  const [addProductValue, { data: dataProductValue }] = useAddProductValueMutation()
-  const [inputProductValue, setInputProductValue] = useState<InputAddProductValue>({ attributeId: "", value: "" })
+  const [inputValueByAttr, setInputValueByAttr] = useState<{ [key: string]: string }>({})
+  const [deleteValue, { data: checkDelete }] = useDeleteProductValueByAttributeMutation()
 
-  const setInputValue: GetValueChange<string> = async (value, attr, name,) => {
+  const setInputValue: GetValueChange<string> = async (value, attr, name, setValue) => {
 
     if (attr === "categoryId") {
       await setDataAttribute({ variables: { categoryId: value } });
       const category = dataCategory?.categories.categories?.find(category => category.id == value)?.name
       category && setNameCategory(category)
-
+    } else {
+      attr && setInputValueByAttr(inputValue => ({ ...inputValue, [attr]: value }))
+      // setValue && setValue("sg")
     }
-
-    // attr === "attributeId" && setInputProductValue(setValue => ({ ...setValue, attributeId: value }))
-    // attr === "value" && setInputProductValue(setValue => ({ ...setValue, value: value }))
   }
 
 
-  const onAddProductValue = async () => {
-    inputProductValue && await addProductValue({ variables: { inputProductValue } })
+
+  const onDeleteValueAttr: HandleClickButton<string> = async (_, id) => {
+    id && await deleteValue({
+      variables: { valueId: "" },
+      update(cache, { data: check }) {
+        const read = cache.readFragment({ fragment: ProductAttributeInfoFragmentDoc, id: "ProductAttributes:1bc5bc91-b80b-41ae-8fd6-51ebab982919" })
+        console.log(cache.identify({ __typename: "ProductAttributes" }))
+        cache.writeFragment({
+          id: cache.identify({ __ref: "ProductValues:" + id }),
+          fragment: ProductAttributeInfoFragmentDoc,
+          data: {
+
+          }
+
+
+        });
+        // cache.modify({
+
+        //   fields: {
+        //     productAttributes(prev, { readField, fieldName }) {
+        //       console.log(readField({ fieldName: "productAttributes" }), fieldName)
+        //     }
+        //   },
+
+        // })
+      }
+    })
+
+
+
+
   }
 
-  const onDeleteValueAttr: HandleClickButton<string> = (_, id) => {
-    alert(id)
-  }
+
 
   useEffect(() => {
+
     const getDataTable = dataAttribute?.productAttributes.attributes?.map<TypeAttributeTable>((attr, index) => ({
       Stt: index + 1,
       "Thuộc tính": attr.name,
@@ -66,15 +91,11 @@ const AddProductValue = ({ }: Props) => {
         <span>{value.name}</span>
         <Button<string> data={value.id} handle={onDeleteValueAttr} text="Xóa" />
       </div>)} </div>,
-      "Thêm Giá trị": <div className={cx("add-value")}>
-        <Button text="Thêm" data={attr.id} />
-        <Input width="200px" attr="value" value="" name="Nhập value" getValueChange={setInputValue} />
-      </div>
-
+      "Thêm Giá trị": <div className={cx("add-value")}> <AddValueByAttribute attributeId={attr.id} /></div>
     }))
     setDataTable(getDataTable)
 
-  }, [dataAttribute])
+  }, [dataAttribute, inputValueByAttr, checkDelete])
 
   return (
     <div className={cx("wrapper")}>
@@ -93,7 +114,7 @@ const AddProductValue = ({ }: Props) => {
             )}
           />}
       </div>
-      {dataTable && <div className={cx("table")}>
+      {dataTable && inputValueByAttr && <div className={cx("table")}>
         <Table<TypeAttributeTable>
           loading={true}
           name={`Bảng thuộc tinh ${nameCategory}`}

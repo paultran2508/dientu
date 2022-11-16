@@ -1,5 +1,5 @@
 import classNames from "classnames/bind"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { GetValueChange } from "../../../types/GetValueChange"
 import styled from "./input.module.scss"
 
@@ -11,7 +11,8 @@ type Props = {
   type?: "number" | "text" | "password",
   width?: string
   getValueChange?: GetValueChange<string>,
-  attr?: string
+  attr?: string,
+  setValueInput?: Dispatch<SetStateAction<string>>
 
 }
 
@@ -19,13 +20,13 @@ type Props = {
 
 const Input = ({ name, value, type, width, getValueChange, attr }: Props) => {
 
-  const [valueInput, setValueInput] = useState(value)
+  const [valueInput, setValueInput] = useState(value ?? "")
 
   return (
     <div style={{ width: width ?? "100%" }} className={cx('wrapper')}>
       <input type={type} className={cx("input")} placeholder=" " onChange={(e) => {
         setValueInput(e.target.value)
-        getValueChange && getValueChange(e.target.value, attr, name)
+        getValueChange && getValueChange(e.target.value, attr, name, setValueInput)
       }} value={valueInput} />
       <label className={cx("label")} > {name} :</label>
 

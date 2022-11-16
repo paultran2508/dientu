@@ -34,7 +34,6 @@ export class CategoryResolver extends CategoryBase {
       order: { createAt: "DESC" },
       take: realLimit
     })
-    console.log(categories)
     return this._return({
       categories,
       pagination: {

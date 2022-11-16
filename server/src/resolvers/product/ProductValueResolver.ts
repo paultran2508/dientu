@@ -1,3 +1,4 @@
+import { ImgMutationResponse } from './../../types/mutations/ImgMutationResponse';
 import { ProductValueMutationResponse } from './../../types/mutations/ProductValueMutationResponse';
 import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
 import { ProductColors } from '../../entities/ProductColors';
@@ -11,6 +12,7 @@ import { InputProductValue } from './../../types/inputs/InputProductValue';
 import { FieldError } from './../../types/mutations/FieldError';
 import { ProductAttributeMutationResponse } from './../../types/mutations/ProductAttributeMutationResponse';
 import { ProductColorMutationResponse } from './../../types/mutations/ProductColorMutationResponse';
+import { IMutationResponse } from 'src/types/mutations/MutationResponse';
 
 const ProductValueBase = createBaseResolver({ name: "productValue", entity: ProductValues })
 
@@ -85,6 +87,26 @@ export class ProductValueResolver extends ProductValueBase {
       return this._return({ value: dataValue[0] })
     } catch (error) {
       return this.catchQuery(error)
+    }
+  }
+
+  @Mutation(_type => Boolean)
+  @UseMiddleware(checkAuth)
+  async deleteProductValueByAttribute(
+    @Arg("valueId", () => String) valueId: string,
+    @Ctx() { dataSource }: Context
+  ): Promise<boolean> {
+    try {
+      return await dataSource.transaction(async source => {
+        const exitingValue = await source.findOneBy(ProductValues, { id: valueId })
+        if (exitingValue) {
+          exitingValue.remove()
+          return true
+        }
+        return false
+      })
+    } catch (error) {
+      return false
     }
   }
 
