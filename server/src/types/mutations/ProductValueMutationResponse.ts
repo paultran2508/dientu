@@ -11,6 +11,6 @@ export class ProductValueMutationResponse implements IMutationResponse {
   fieldError?: FieldError[]
 
   @Field(_return => ProductValues, { nullable: true })
-  values?: ProductValues
+  value?: ProductValues
 
 }

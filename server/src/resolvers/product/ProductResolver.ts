@@ -58,6 +58,9 @@ export class ProductResolver extends ProductsBaseResolver {
       if (sort?.name == "brand") {
         order = { brand: { name: sort.sort } }
       }
+      if (sort?.name == "category") {
+        order = { category: { name: sort.sort } }
+      }
 
       if (hasMore) {
         products = await Products.find({
@@ -71,7 +74,6 @@ export class ProductResolver extends ProductsBaseResolver {
           take: realLimit,
         })
       }
-      console.log(sort)
       return this._return({
         products,
         categoryId: categoryId,

@@ -1,14 +1,16 @@
-import { ProductColorMutationResponse } from './../../types/mutations/ProductColorMutationResponse';
-import { Categories } from './../../entities/Categories';
+import { ProductValueMutationResponse } from './../../types/mutations/ProductValueMutationResponse';
 import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
+import { ProductColors } from '../../entities/ProductColors';
 import { ProductValues } from "../../entities/ProductValues";
 import { createBaseResolver, TypeEntityExtension } from "../abstract/BaseResolver";
+import { Categories } from './../../entities/Categories';
 import { ProductAttributes } from './../../entities/ProductAttributes';
 import { checkAuth } from './../../middleware/checkAuth';
 import { Context } from './../../types/Context';
+import { InputProductValue } from './../../types/inputs/InputProductValue';
 import { FieldError } from './../../types/mutations/FieldError';
 import { ProductAttributeMutationResponse } from './../../types/mutations/ProductAttributeMutationResponse';
-import { ProductColors } from '../../entities/ProductColors';
+import { ProductColorMutationResponse } from './../../types/mutations/ProductColorMutationResponse';
 
 const ProductValueBase = createBaseResolver({ name: "productValue", entity: ProductValues })
 
@@ -56,6 +58,31 @@ export class ProductValueResolver extends ProductValueBase {
     try {
       const attributeData = await dataSource.getRepository(ProductAttributes).save({ name: attribute })
       return this._return({ attribute: attributeData })
+    } catch (error) {
+      return this.catchQuery(error)
+    }
+  }
+
+  @Mutation(_type => ProductValueMutationResponse)
+  @UseMiddleware(checkAuth)
+  async addProductValue(
+    @Arg("inputProductValue") { attributeId, value }: InputProductValue,
+    @Ctx() { dataSource }: Context
+  ): Promise<ProductValueMutationResponse> {
+    try {
+      const dataValue = await dataSource.transaction(async source => {
+        this.source = source
+        const attribute = (await this.addEntity({ entity: ProductAttributes, findIds: [{ id: attributeId }] }))[0]
+        return await this.addEntity({
+          entity: ProductValues,
+          values: [{
+            attribute: attribute,
+            name: value,
+          }]
+        })
+      })
+
+      return this._return({ value: dataValue[0] })
     } catch (error) {
       return this.catchQuery(error)
     }

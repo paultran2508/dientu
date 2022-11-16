@@ -34,7 +34,7 @@ const SelectInput = ({ name, options, all, attr, getValueChange }: Props) => {
         {all && <option value={''}>Tac ca</option>}
         {options.map(option => (<option key={option.value} value={option.value}>{option.name ?? option.value}</option>))}
       </select>
-
+      <div className={cx("error")}></div>
     </div>
   )
 }

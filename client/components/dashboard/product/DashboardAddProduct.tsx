@@ -23,8 +23,6 @@ const DashboardAddProduct = ({ callbackShowAddProduct }: Props) => {
   const [addProductMutation, { data: dataProductMutation }] = useAddProductMutation()
   const { error, success } = useAlert()
 
-  console.log(dataCategory)
-
   const onSubmitForm = async () => {
     const variables: Exact<{ productOptionInput: AddProductInput; }> = {
       productOptionInput: {

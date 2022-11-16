@@ -1,0 +1,12 @@
+.wrapper {
+  // height: 100px;
+  background-color: var(--bg-2);
+  .value {
+    display: flex;
+    gap: 2rem;
+  }
+  .add-value {
+    display: flex;
+    // border: 1px solid;
+  }
+}

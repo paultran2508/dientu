@@ -96,15 +96,18 @@ function AddOptionProduct({
       </div>
       <h2>{"Option " + `${indexOption + 1}`}</h2>
       <div className={cx("ctn-select")}>
-        {data?.productAttributes.attributes && data?.productAttributes.attributes.map(attrs =>
-          <SelectInput
-            all
-            getValueChange={getOptionValue}
-            attr="valueIds"
-            name={attrs.name}
-            key={attrs.id}
-            options={attrs.values.map(value => ({ name: value.name, value: value.id }))}
-          />)
+        {data?.productAttributes.attributes &&
+          data?.productAttributes.attributes.map(attrs =>
+            <SelectInput
+              all
+              getValueChange={getOptionValue}
+              attr="valueIds"
+              name={attrs.name}
+              key={attrs.id}
+              options={attrs.values.map(value =>
+                ({ name: value.name, value: value.id }))
+              }
+            />)
         }
       </div>
       <Input attr="name" value=""

@@ -146,6 +146,11 @@ export type Imgs = {
   type: Scalars['String'];
 };
 
+export type InputProductValue = {
+  attributeId: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type LoginInput = {
   email?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
@@ -157,6 +162,7 @@ export type Mutation = {
   addBrand: BrandMutationResponse;
   addCategory: CategoryMutationResponse;
   addProduct: ProductMutationResponse;
+  addProductValue: ProductValueMutationResponse;
   deleteProduct: Scalars['Boolean'];
   login: UserMutationResponse;
   logout: Scalars['Boolean'];
@@ -182,6 +188,11 @@ export type MutationAddCategoryArgs = {
 
 export type MutationAddProductArgs = {
   productOptionInput: AddProductInput;
+};
+
+
+export type MutationAddProductValueArgs = {
+  inputProductValue: InputProductValue;
 };
 
 
@@ -298,6 +309,15 @@ export type ProductPrices = {
   note: Scalars['String'];
   price: Scalars['Float'];
   type: PriceType;
+};
+
+export type ProductValueMutationResponse = IMutationResponse & {
+  __typename?: 'ProductValueMutationResponse';
+  code: Scalars['Float'];
+  fieldErrors?: Maybe<Array<FieldError>>;
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
+  value?: Maybe<ProductValues>;
 };
 
 export type ProductValues = {
@@ -425,6 +445,8 @@ export type ProductPriceInfoFragment = { __typename?: 'ProductPrices', price: nu
 
 export type ProductValueInfoFragment = { __typename?: 'ProductValues', name: string, id: string };
 
+export type ProductValueMutationResponseFragment = { __typename?: 'ProductValueMutationResponse', code: number, message: string, success: boolean, value?: { __typename?: 'ProductValues', name: string, id: string } | null };
+
 export type UserInfoFragment = { __typename?: 'Users', id: string, avatar: string, email: string, theme: string };
 
 export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, message: string, success: boolean, user?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null };
@@ -435,6 +457,13 @@ export type AddProductMutationVariables = Exact<{
 
 
 export type AddProductMutation = { __typename?: 'Mutation', addProduct: { __typename?: 'ProductMutationResponse', code: number, message: string, success: boolean, categoryId?: string | null, products?: Array<{ __typename?: 'Products', name: string, id: string, createAt: any, brand: { __typename?: 'Brands', name: string }, options: Array<{ __typename?: 'ProductOptions', id: string, name: string, prices: Array<{ __typename?: 'ProductPrices', price: number, type: PriceType, note: string, color: { __typename?: 'ProductColors', name: string } }>, values: Array<{ __typename?: 'ProductValues', name: string, id: string }>, imgs: Array<{ __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf }> }>, category: { __typename?: 'Categories', name: string }, path: { __typename?: 'Paths', name: string } }> | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, pagination?: { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number, skip: number } | null } };
+
+export type AddProductValueMutationVariables = Exact<{
+  inputProductValue: InputProductValue;
+}>;
+
+
+export type AddProductValueMutation = { __typename?: 'Mutation', addProductValue: { __typename?: 'ProductValueMutationResponse', code: number, message: string, success: boolean, value?: { __typename?: 'ProductValues', name: string, id: string } | null } };
 
 export type DeleteProductMutationVariables = Exact<{
   id: Scalars['String'];
@@ -677,6 +706,16 @@ export const ProductMutationResponseFragmentDoc = gql`
     ${ProductInfoFragmentDoc}
 ${FieldErrorInfoFragmentDoc}
 ${PaginationFragmentDoc}`;
+export const ProductValueMutationResponseFragmentDoc = gql`
+    fragment productValueMutationResponse on ProductValueMutationResponse {
+  code
+  message
+  success
+  value {
+    ...productValueInfo
+  }
+}
+    ${ProductValueInfoFragmentDoc}`;
 export const UserInfoFragmentDoc = gql`
     fragment userInfo on Users {
   id
@@ -732,6 +771,39 @@ export function useAddProductMutation(baseOptions?: Apollo.MutationHookOptions<A
 export type AddProductMutationHookResult = ReturnType<typeof useAddProductMutation>;
 export type AddProductMutationResult = Apollo.MutationResult<AddProductMutation>;
 export type AddProductMutationOptions = Apollo.BaseMutationOptions<AddProductMutation, AddProductMutationVariables>;
+export const AddProductValueDocument = gql`
+    mutation AddProductValue($inputProductValue: InputProductValue!) {
+  addProductValue(inputProductValue: $inputProductValue) {
+    ...productValueMutationResponse
+  }
+}
+    ${ProductValueMutationResponseFragmentDoc}`;
+export type AddProductValueMutationFn = Apollo.MutationFunction<AddProductValueMutation, AddProductValueMutationVariables>;
+
+/**
+ * __useAddProductValueMutation__
+ *
+ * To run a mutation, you first call `useAddProductValueMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddProductValueMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addProductValueMutation, { data, loading, error }] = useAddProductValueMutation({
+ *   variables: {
+ *      inputProductValue: // value for 'inputProductValue'
+ *   },
+ * });
+ */
+export function useAddProductValueMutation(baseOptions?: Apollo.MutationHookOptions<AddProductValueMutation, AddProductValueMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddProductValueMutation, AddProductValueMutationVariables>(AddProductValueDocument, options);
+      }
+export type AddProductValueMutationHookResult = ReturnType<typeof useAddProductValueMutation>;
+export type AddProductValueMutationResult = Apollo.MutationResult<AddProductValueMutation>;
+export type AddProductValueMutationOptions = Apollo.BaseMutationOptions<AddProductValueMutation, AddProductValueMutationVariables>;
 export const DeleteProductDocument = gql`
     mutation DeleteProduct($id: String!) {
   deleteProduct(id: $id)

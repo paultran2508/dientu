@@ -1,9 +1,11 @@
 import classNames from "classnames/bind"
 import React, { useEffect, useState } from "react"
-import { ProductsQuery, useDeleteProductMutation, useProductsLazyQuery } from "../../../src/generated/graphql"
+import { ProductAttributeMutationResponse, ProductMutationResponse, ProductMutationResponseFragment, ProductsQuery, useDeleteProductMutation, useProductsLazyQuery } from "../../../src/generated/graphql"
 import { Button, HandleClickButton } from "../../Lib/Button"
+import Modal from "../../Lib/Modal"
 import Table from "../../table"
 import DashboardLayout from "../DashboardLayout"
+import AddProductValue from "./AddProductValue"
 import style from "./dashboard-product.module.scss"
 import DashboardAddProduct from "./DashboardAddProduct"
 
@@ -11,52 +13,47 @@ const cx = classNames.bind(style)
 type Props = {}
 export type ProductTable = {
   "Tên": string,
-  // "Đường dẫn": string,
+  "Đường dẫn": string,
   "Thương hiệu": string,
   "Xóa": React.ReactNode,
   "option": React.ReactNode,
-  // "Ảnh": React.ReactNode,
-  "Ngày tạo": string
+  "Ngày tạo": string,
+  "Danh mục": string
 }
-
 
 type Sort = {
   name: string
   sort: 1 | -1
 }
 
-
 const DashboardProduct = ({ }: Props) => {
-
+  const limit = 3
   const [showAddProduct, setShowAddProduct] = useState<boolean>(false)
+  const [showAddValue, setShowAddValue] = useState<boolean>(false)
   const [dataProductTable, setDataProductTable] = useState<ProductTable[]>()
-  const [setProductQuery, { data: dataProductQuery, fetchMore, updateQuery, refetch }]
+  const [setProductQuery, { data: dataProductQuery, fetchMore, updateQuery, refetch, loading }]
     = useProductsLazyQuery()
   const [sort, setSort] = useState<Sort>({ name: "createAt", sort: -1 })
-
   const [deleteProduct,] = useDeleteProductMutation()
-
-
   const showOptionTable: HandleClickButton<string> = (_, dataOption) => {
     console.log(dataOption)
   }
 
   const onDeleteProduct: HandleClickButton<string> = async (_, id) => {
     if (id) {
-      await deleteProduct({ variables: { id } })
-      updateQuery((prev) => {
-        let setProductQuery:
-          ProductsQuery | null = prev;
-        if (setProductQuery && prev) {
-          setProductQuery = {
-            productsByCategoryId: {
-              ...prev.productsByCategoryId,
-              products: prev?.productsByCategoryId
-                .products?.filter(product => product.id !== id)
+      await deleteProduct({
+        variables: { id },
+        update(cache) {
+          cache.modify({
+            fields: {
+              productsByCategoryId(products): Omit<ProductMutationResponse, "products"> & { products: { __ref: string }[] } {
+                let setProduct: Omit<ProductMutationResponse, "products"> & { products: { __ref: string }[] } = products;
+                console.log(setProduct.products.find(pr => pr.__ref == "Products:" + id))
+                return { ...setProduct, products: setProduct.products.filter(pr => pr.__ref !== "Products:" + id) }
+              }
             }
-          }
+          })
         }
-        return setProductQuery
       })
     }
   }
@@ -67,12 +64,11 @@ const DashboardProduct = ({ }: Props) => {
       variables: {
         limit: 2,
         hasMore: dataProductQuery?.productsByCategoryId.pagination?.hasMore,
-        skip: skip ? skip + 2 : 2,
+        skip: skip ? skip + 2 : limit,
         sort: sort,
       }
     })
     updateQuery((prev) => {
-      // console.log(data.productsByCategoryId.pagination)
       return {
         productsByCategoryId: {
           ...data.productsByCategoryId,
@@ -82,63 +78,72 @@ const DashboardProduct = ({ }: Props) => {
           ] : []
         }
       }
-    }
-    )
+    })
   }
 
   useEffect(() => {
-    setProductQuery({ variables: { limit: 3, hasMore: true, sort: sort, skip: 0 } })
-
+    setProductQuery({ variables: { limit, hasMore: true, sort: sort, skip: 0 } })
     const product = dataProductQuery?.productsByCategoryId.products?.map<ProductTable>((product, index) => ({
       stt: index + 1,
-      // id: product.id,
       Tên: product.name,
-      // "Đường dẫn": product.path.name,
+      "Danh mục": product.category.name,
+      "Đường dẫn": product.path.name,
       "Thương hiệu": product.brand.name,
-      option: <Button<string> data={product.id} handle={showOptionTable} key={product.id} text="option" />,
-      Xóa: <Button<string> data={product.id} key={product.id} handle={onDeleteProduct} text="xóa" />,
+      option: <Button<string> data={product.id}
+        handle={showOptionTable} key={product.id}
+        text="option" />,
+      Xóa: <Button<string>
+        data={product.id}
+        key={product.id}
+        handle={onDeleteProduct}
+        text="xóa" />,
       "Ngày tạo": product.createAt,
-      // Ảnh: <div key={product.id}> {product.options.map(option => {
-      //   let imgs: string[] = []
-      //   option.imgs.forEach(img => {
-      //     imgs.push(img.src)
-      //   })
-      //   return imgs.map(image => <Image key={image} height={50} width={80} alt="" src={image} />)
-      // })}</div>
     }))
     setDataProductTable(product)
-    console.log(dataProductQuery)
   }, [dataProductQuery, sort])
 
+  const callbackOnAddOption = () => {
+    refetch()
+    setShowAddProduct(false)
+  }
 
   return (
     <div className={cx('wrapper')}>
       <div className={cx("show-product-table")}>
-        {dataProductTable && <Table<ProductTable> onPushData={callbackAddDataTable} onSortTable={(_, data) => {
-          if (data?.name === "Tên") {
-            setSort({ name: "name", sort: data.sort })
-          }
-          if (data?.name === "Ngày tạo") {
-            setSort({ name: "createAt", sort: data.sort })
-          }
-
-          if (data?.name === "Thương hiệu") {
-            setSort({ name: "brand", sort: data.sort })
-          }
-          console.log(data)
-        }} data={dataProductTable} />}
+        {dataProductTable && <Table<ProductTable>
+          name="Bảng sản phẩm"
+          loading={loading}
+          onPushData={callbackAddDataTable}
+          onSortTable={(_, data) => {
+            data?.name === "Tên" && setSort({ name: "name", sort: data.sort })
+            data?.name === "Ngày tạo" && setSort({ name: "createAt", sort: data.sort })
+            data?.name === "Thương hiệu" && setSort({ name: "brand", sort: data.sort })
+            data?.name === "Danh mục" && setSort({ name: "category", sort: data.sort })
+          }}
+          data={dataProductTable}
+        />}
       </div>
       <div className={cx("add-product")}>
-        <Button text={!showAddProduct ? "Thêm mới sản phẩm" : "Đóng"} handle={() => { setShowAddProduct(check => !check) }} />
-        {showAddProduct && <DashboardAddProduct callbackShowAddProduct={() => {
-          refetch({ limit: 2, hasMore: true })
-          setShowAddProduct(false)
-        }} />}
+        <Button
+          text={!showAddProduct ? "Thêm mới sản phẩm" : "Đóng"}
+          handle={() => { setShowAddProduct(check => !check) }}
+        />
+        {showAddProduct && <DashboardAddProduct
+          callbackShowAddProduct={callbackOnAddOption}
+        />}
+      </div>
+      <div className={cx("add-value")}>
+        <Button
+          text="thêm value"
+          handle={() => { setShowAddValue(true) }}
+        />
+        {showAddValue &&
+          <Modal open={setShowAddValue} >
+            <AddProductValue />
+          </Modal >}
       </div>
     </div>
   )
 }
-
 DashboardProduct.Layout = DashboardLayout
-
 export default DashboardProduct

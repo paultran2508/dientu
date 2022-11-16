@@ -1,0 +1,8 @@
+fragment productValueMutationResponse on ProductValueMutationResponse {
+  code
+  message
+  success
+  value {
+    ...productValueInfo
+  }
+}

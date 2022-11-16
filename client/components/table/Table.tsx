@@ -8,6 +8,8 @@ type Props<T> = {
   data: T[],
   onPushData: HandleClickButton<string>
   onSortTable: HandleClickButton<Sort>
+  loading: boolean,
+  name: string
 
 }
 
@@ -15,14 +17,14 @@ export type Sort = {
   name: string
   sort: 1 | -1
 }
-function Table<T extends object>({ data, onPushData, onSortTable }: Props<T>) {
+function Table<T extends object>({ data, onPushData, onSortTable, loading, name }: Props<T>) {
 
   const header = Object.keys(data[0])
   const values = data.map(value => Object.values(value))
 
 
   return <table className={cx("table")}>
-    <caption>  <h1>Danh Sách San Phẩm</h1>   </caption>
+    <caption>  <h1>{name}</h1>   </caption>
     <thead>
       <tr>
         {header.map(header =>
@@ -49,7 +51,7 @@ function Table<T extends object>({ data, onPushData, onSortTable }: Props<T>) {
     </tbody>
     <tfoot>
       <tr>
-        <td scope="row" colSpan={header.length} ><Button text="Xêm thêm" handle={onPushData} /></td>
+        <td scope="row" colSpan={header.length} ><Button loading={loading} text="Xêm thêm" handle={onPushData} /></td>
         {/* <td colSpan={2}>77</td> */}
         {/* <td></td> */}
       </tr>

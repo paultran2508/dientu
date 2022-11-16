@@ -32,7 +32,7 @@ function Button<T>({ icon, text, link, handle, loading, fullWidth, submit, data 
     type={submit ? 'submit' : 'button'}
 
     onClick={(e) => {
-      handle && handle(e, data)
+      !loading && handle && handle(e, data)
     }}
     className={cx('button-custom', fullWidth && 'full-width')} >
     {loading ? (<span>loading ... </span>) : <>{text && <span className={cx('text')}>{text}</span>}

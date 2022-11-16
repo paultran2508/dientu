@@ -15,7 +15,7 @@ export class ProductAttributes extends BaseEntity {
   name!: string
 
   @Field(_type => [ProductValues])
-  @OneToMany(() => ProductValues, value => value.attribute)
+  @OneToMany(() => ProductValues, value => value.attribute, { cascade: true })
   values: ProductValues[]
 
   // @Field(_type => [Categories])
