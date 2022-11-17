@@ -1,12 +1,13 @@
 import classNames from "classnames/bind"
 import { useEffect, useState } from "react"
-import { ProductAttributeInfoFragmentDoc, ProductAttributesDocument, ProductValueInfoFragmentDoc, useCategoryQuery, useDeleteProductValueByAttributeMutation, useProductAttributesLazyQuery } from "../../../../src/generated/graphql"
+import { ProductAttributeInfoFragmentDoc, useCategoryQuery, useDeleteProductValueByAttributeMutation, useProductAttributesLazyQuery } from "../../../../src/generated/graphql"
 import { GetValueChange } from "../../../../types/GetValueChange"
 import { Button, HandleClickButton } from "../../../Lib/Button"
 import SelectInput from "../../../Lib/select"
 import Table from "../../../table"
 import style from "./add-product-value.module.scss"
 import AddValueByAttribute from "./AddValueByAttribute"
+import { AttributeFragment } from "./AddValueByAttribute/AddValueByAttribute"
 
 const cx = classNames.bind(style)
 
@@ -22,6 +23,12 @@ type TypeAttributeTable = {
   // "Thêm Giá trị": React.ReactNode
 }
 
+type GetValueId = {
+  attrId: string
+  valueId: string
+}
+
+
 
 
 
@@ -34,7 +41,7 @@ const AddProductValue = ({ }: Props) => {
   const [inputValueByAttr, setInputValueByAttr] = useState<{ [key: string]: string }>({})
   const [deleteValue, { data: checkDelete }] = useDeleteProductValueByAttributeMutation()
 
-  const setInputValue: GetValueChange<string> = async (value, attr, name, setValue) => {
+  const setInputValue: GetValueChange<string> = async ({ value, attr }) => {
 
     if (attr === "categoryId") {
       await setDataAttribute({ variables: { categoryId: value } });
@@ -42,54 +49,39 @@ const AddProductValue = ({ }: Props) => {
       category && setNameCategory(category)
     } else {
       attr && setInputValueByAttr(inputValue => ({ ...inputValue, [attr]: value }))
-      // setValue && setValue("sg")
     }
   }
 
-
-
-  const onDeleteValueAttr: HandleClickButton<string> = async (_, id) => {
-    id && await deleteValue({
-      variables: { valueId: "" },
+  const onDeleteValueAttr: HandleClickButton<GetValueId> = async (_, getId) => {
+    getId?.valueId && await deleteValue({
+      variables: { valueId: getId?.valueId },
       update(cache, { data: check }) {
-        const read = cache.readFragment({ fragment: ProductAttributeInfoFragmentDoc, id: "ProductAttributes:1bc5bc91-b80b-41ae-8fd6-51ebab982919" })
-        console.log(cache.identify({ __typename: "ProductAttributes" }))
-        cache.writeFragment({
-          id: cache.identify({ __ref: "ProductValues:" + id }),
+        cache.updateFragment<AttributeFragment>({
           fragment: ProductAttributeInfoFragmentDoc,
-          data: {
-
+          id: "ProductAttributes:" + getId.attrId,
+        }, (prev) => {
+          let setAttributeFragment: AttributeFragment | null = prev;
+          if (check?.deleteProductValueByAttribute && prev) {
+            setAttributeFragment = {
+              ...prev,
+              values: prev.values.filter(value => value.id !== getId.valueId)
+            }
           }
-
-
-        });
-        // cache.modify({
-
-        //   fields: {
-        //     productAttributes(prev, { readField, fieldName }) {
-        //       console.log(readField({ fieldName: "productAttributes" }), fieldName)
-        //     }
-        //   },
-
-        // })
+          console.log(setAttributeFragment?.values)
+          return setAttributeFragment
+        })
       }
     })
-
-
-
-
   }
 
 
-
   useEffect(() => {
-
     const getDataTable = dataAttribute?.productAttributes.attributes?.map<TypeAttributeTable>((attr, index) => ({
       Stt: index + 1,
       "Thuộc tính": attr.name,
       "Giá trị": <div className={cx("value")}> {attr.values.map(value => <div key={value.id} className={cx("item-value")}>
         <span>{value.name}</span>
-        <Button<string> data={value.id} handle={onDeleteValueAttr} text="Xóa" />
+        <Button<GetValueId> data={{ attrId: attr.id, valueId: value.id }} handle={onDeleteValueAttr} text="Xóa" />
       </div>)} </div>,
       "Thêm Giá trị": <div className={cx("add-value")}> <AddValueByAttribute attributeId={attr.id} /></div>
     }))
@@ -100,8 +92,6 @@ const AddProductValue = ({ }: Props) => {
   return (
     <div className={cx("wrapper")}>
       <h1>Thêm Value Sản Phẩm</h1>
-
-
       <div className={cx("show-category")}>
         {dataCategory?.categories.categories && dataCategory &&
           <SelectInput
@@ -124,20 +114,6 @@ const AddProductValue = ({ }: Props) => {
         />
       </div>
       }
-      {/* {dataAttribute?.productAttributes.attributes && <SelectInput
-        all
-        getValueChange={setInputValue}
-        attr="attributeId"
-        name={"Chọn Attribute"}
-        // key={}
-        options={dataAttribute?.productAttributes.attributes.map(attr => ({ value: attr.id, name: attr.name }))}
-      />
-
-
-      }
-      
-      <Button text="Thêm Value" handle={onAddProductValue} /> */}
-      {/* <Button text="Tạo attribute" /> */}
     </div>
   )
 }

@@ -451,7 +451,7 @@ export type ProductPriceInfoFragment = { __typename?: 'ProductPrices', price: nu
 
 export type ProductValueInfoFragment = { __typename?: 'ProductValues', name: string, id: string };
 
-export type ProductValueMutationResponseFragment = { __typename?: 'ProductValueMutationResponse', code: number, message: string, success: boolean, value?: { __typename?: 'ProductValues', name: string, id: string } | null };
+export type ProductValueMutationResponseFragment = { __typename?: 'ProductValueMutationResponse', code: number, message: string, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, value?: { __typename?: 'ProductValues', name: string, id: string } | null };
 
 export type UserInfoFragment = { __typename?: 'Users', id: string, avatar: string, email: string, theme: string };
 
@@ -469,7 +469,7 @@ export type AddProductValueMutationVariables = Exact<{
 }>;
 
 
-export type AddProductValueMutation = { __typename?: 'Mutation', addProductValue: { __typename?: 'ProductValueMutationResponse', code: number, message: string, success: boolean, value?: { __typename?: 'ProductValues', name: string, id: string } | null } };
+export type AddProductValueMutation = { __typename?: 'Mutation', addProductValue: { __typename?: 'ProductValueMutationResponse', code: number, message: string, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, value?: { __typename?: 'ProductValues', name: string, id: string } | null } };
 
 export type DeleteProductMutationVariables = Exact<{
   id: Scalars['String'];
@@ -724,11 +724,15 @@ export const ProductValueMutationResponseFragmentDoc = gql`
   code
   message
   success
+  fieldErrors {
+    ...fieldErrorInfo
+  }
   value {
     ...productValueInfo
   }
 }
-    ${ProductValueInfoFragmentDoc}`;
+    ${FieldErrorInfoFragmentDoc}
+${ProductValueInfoFragmentDoc}`;
 export const UserInfoFragmentDoc = gql`
     fragment userInfo on Users {
   id

@@ -1,3 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
 
-export type GetValueChange<T> = (value: T, attr?: string, name?: string, setValue?: Dispatch<SetStateAction<string>>) => void
+type Callback<T> = { value: T, attr?: string, name?: string, setValue?: Dispatch<SetStateAction<string>> }
+
+export type GetValueChange<T> = (callback: Callback<T>) => void

@@ -54,13 +54,13 @@ const DashboardAddProduct = ({ callbackShowAddProduct }: Props) => {
   }
 
 
-  const setInputProductValue: GetValueChange<any> = (input, attr) => {
+  const setInputProductValue: GetValueChange<any> = ({ value, attr }) => {
     if (attr === "categoryId") {
-      input !== "" && dispatch(addOptionValue(fomValueInit))
-      input === "" && dispatch(setFormValue({ optionValues: [] }))
+      value !== "" && dispatch(addOptionValue(fomValueInit))
+      value === "" && dispatch(setFormValue({ optionValues: [] }))
     }
     dispatch(setFormValue({
-      [attr as keyof AddFormValue]: input
+      [attr as keyof AddFormValue]: value
     }))
   }
 

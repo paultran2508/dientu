@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction, useState } from "react"
 import { GetValueChange } from "../../../types/GetValueChange"
 import styled from "./input.module.scss"
 
-
 const cx = classNames.bind(styled)
 type Props = {
   name: string
@@ -13,10 +12,7 @@ type Props = {
   getValueChange?: GetValueChange<string>,
   attr?: string,
   setValueInput?: Dispatch<SetStateAction<string>>
-
 }
-
-
 
 const Input = ({ name, value, type, width, getValueChange, attr }: Props) => {
 
@@ -24,10 +20,21 @@ const Input = ({ name, value, type, width, getValueChange, attr }: Props) => {
 
   return (
     <div style={{ width: width ?? "100%" }} className={cx('wrapper')}>
-      <input type={type} className={cx("input")} placeholder=" " onChange={(e) => {
-        setValueInput(e.target.value)
-        getValueChange && getValueChange(e.target.value, attr, name, setValueInput)
-      }} value={valueInput} />
+      <input
+        type={type}
+        className={cx("input")}
+        placeholder=" "
+        onChange={(e) => {
+          setValueInput(e.target.value)
+          getValueChange && getValueChange({
+            value: e.target.value,
+            attr,
+            name,
+            setValue: setValueInput
+          })
+        }}
+        value={valueInput}
+      />
       <label className={cx("label")} > {name} :</label>
 
     </div>

@@ -30,7 +30,7 @@ const SelectInput = ({ name, options, all, attr, getValueChange }: Props) => {
   return (
     <div className={cx('wrapper')}>
       <label>{name}:</label>
-      <select onClick={() => { getValueChange && getValueChange(value, attr, name) }} defaultValue={value} onChange={onChangeValue} >
+      <select onClick={() => { getValueChange && getValueChange({ value, attr, name }) }} defaultValue={value} onChange={onChangeValue} >
         {all && <option value={''}>Tac ca</option>}
         {options.map(option => (<option key={option.value} value={option.value}>{option.name ?? option.value}</option>))}
       </select>

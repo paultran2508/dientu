@@ -2,6 +2,9 @@ fragment productValueMutationResponse on ProductValueMutationResponse {
   code
   message
   success
+  fieldErrors {
+    ...fieldErrorInfo
+  }
   value {
     ...productValueInfo
   }

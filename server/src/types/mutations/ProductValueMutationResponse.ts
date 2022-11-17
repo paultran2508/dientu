@@ -8,7 +8,7 @@ export class ProductValueMutationResponse implements IMutationResponse {
   code: number;
   message: string;
   success: boolean;
-  fieldError?: FieldError[]
+  fieldErrors?: FieldError[]
 
   @Field(_return => ProductValues, { nullable: true })
   value?: ProductValues

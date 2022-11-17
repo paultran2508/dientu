@@ -1,9 +1,8 @@
-import { ImgMutationResponse } from './../../types/mutations/ImgMutationResponse';
-import { ProductValueMutationResponse } from './../../types/mutations/ProductValueMutationResponse';
 import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
 import { ProductColors } from '../../entities/ProductColors';
 import { ProductValues } from "../../entities/ProductValues";
 import { createBaseResolver, TypeEntityExtension } from "../abstract/BaseResolver";
+import { HandleErrorResponse } from '../exceptions/HandleErrorResult';
 import { Categories } from './../../entities/Categories';
 import { ProductAttributes } from './../../entities/ProductAttributes';
 import { checkAuth } from './../../middleware/checkAuth';
@@ -12,7 +11,7 @@ import { InputProductValue } from './../../types/inputs/InputProductValue';
 import { FieldError } from './../../types/mutations/FieldError';
 import { ProductAttributeMutationResponse } from './../../types/mutations/ProductAttributeMutationResponse';
 import { ProductColorMutationResponse } from './../../types/mutations/ProductColorMutationResponse';
-import { IMutationResponse } from 'src/types/mutations/MutationResponse';
+import { ProductValueMutationResponse } from './../../types/mutations/ProductValueMutationResponse';
 
 const ProductValueBase = createBaseResolver({ name: "productValue", entity: ProductValues })
 
@@ -72,6 +71,10 @@ export class ProductValueResolver extends ProductValueBase {
     @Ctx() { dataSource }: Context
   ): Promise<ProductValueMutationResponse> {
     try {
+      if (value == "") {
+        this.setErrors.push({ name: "value", message: "không được để trống", code: "404" })
+        throw new HandleErrorResponse()
+      }
       const dataValue = await dataSource.transaction(async source => {
         this.source = source
         const attribute = (await this.addEntity({ entity: ProductAttributes, findIds: [{ id: attributeId }] }))[0]
