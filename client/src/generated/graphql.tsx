@@ -174,6 +174,7 @@ export type Mutation = {
 
 export type MutationAddAttributeArgs = {
   attribute: Scalars['String'];
+  categoryIds: Array<Scalars['String']>;
 };
 
 
@@ -265,6 +266,7 @@ export type ProductAttributeMutationResponse = IMutationResponse & {
 
 export type ProductAttributes = {
   __typename?: 'ProductAttributes';
+  categories: Array<Categories>;
   id: Scalars['String'];
   name: Scalars['String'];
   values: Array<ProductValues>;
@@ -456,6 +458,14 @@ export type ProductValueMutationResponseFragment = { __typename?: 'ProductValueM
 export type UserInfoFragment = { __typename?: 'Users', id: string, avatar: string, email: string, theme: string };
 
 export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, message: string, success: boolean, user?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null };
+
+export type AddAttributeMutationVariables = Exact<{
+  categoryIds: Array<Scalars['String']> | Scalars['String'];
+  attribute: Scalars['String'];
+}>;
+
+
+export type AddAttributeMutation = { __typename?: 'Mutation', addAttribute: { __typename?: 'ProductAttributeMutationResponse', code: number, success: boolean, message: string, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, attributes?: Array<{ __typename?: 'ProductAttributes', id: string, name: string, values: Array<{ __typename?: 'ProductValues', id: string, name: string }> }> | null } };
 
 export type AddProductMutationVariables = Exact<{
   productOptionInput: AddProductInput;
@@ -755,6 +765,53 @@ export const UserMutationResponseFragmentDoc = gql`
 }
     ${UserInfoFragmentDoc}
 ${FieldErrorInfoFragmentDoc}`;
+export const AddAttributeDocument = gql`
+    mutation AddAttribute($categoryIds: [String!]!, $attribute: String!) {
+  addAttribute(categoryIds: $categoryIds, attribute: $attribute) {
+    code
+    success
+    message
+    fieldErrors {
+      ...fieldErrorInfo
+    }
+    attributes {
+      id
+      name
+      values {
+        id
+        name
+      }
+    }
+  }
+}
+    ${FieldErrorInfoFragmentDoc}`;
+export type AddAttributeMutationFn = Apollo.MutationFunction<AddAttributeMutation, AddAttributeMutationVariables>;
+
+/**
+ * __useAddAttributeMutation__
+ *
+ * To run a mutation, you first call `useAddAttributeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddAttributeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addAttributeMutation, { data, loading, error }] = useAddAttributeMutation({
+ *   variables: {
+ *      categoryIds: // value for 'categoryIds'
+ *      attribute: // value for 'attribute'
+ *   },
+ * });
+ */
+export function useAddAttributeMutation(baseOptions?: Apollo.MutationHookOptions<AddAttributeMutation, AddAttributeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddAttributeMutation, AddAttributeMutationVariables>(AddAttributeDocument, options);
+      }
+export type AddAttributeMutationHookResult = ReturnType<typeof useAddAttributeMutation>;
+export type AddAttributeMutationResult = Apollo.MutationResult<AddAttributeMutation>;
+export type AddAttributeMutationOptions = Apollo.BaseMutationOptions<AddAttributeMutation, AddAttributeMutationVariables>;
 export const AddProductDocument = gql`
     mutation AddProduct($productOptionInput: AddProductInput!) {
   addProduct(productOptionInput: $productOptionInput) {

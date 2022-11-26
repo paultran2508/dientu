@@ -23,7 +23,7 @@ function PriceOption({ callbackRemovePriceThis, indexOption, indexPrice, priceVa
   const [priceValueForm, setPriceValueForm] = useState(priceValue)
   const { data } = useProductColorsQuery({ variables: {} })
 
-  const getValuePriceInput: GetValueChange<string> = (value, attr) => {
+  const getValuePriceInput: GetValueChange<string> = ({ value, attr }) => {
     let setValue: Partial<AddPriceValue> = {};
     attr === "price" && (setValue = { [attr]: +value });
     attr === "colorId" && (setValue = { [attr]: value });

@@ -1,6 +1,7 @@
 import classNames from "classnames/bind"
 import { ChangeEventHandler, Dispatch, memo, SetStateAction, useEffect, useState } from "react"
 import { ImgMutationResponse, ImgOf, ImgsDocument, InputMaybe, useImgsLazyQuery, useUploadImgMutation } from "../../../src/generated/graphql"
+import { GetValueChange } from "../../../types/GetValueChange"
 import { Button, HandleClickButton } from "../Button"
 import ImgDetail from "./ImgDetail"
 import style from "./modal-img-server.module.scss"
@@ -10,7 +11,7 @@ type Props = {
   of?: ImgOf
   open: boolean
   close: Dispatch<SetStateAction<boolean>>
-  callbackImgValues?: GetChooseImgs
+  callbackImgValues?: GetValueChange<string[]>
 }
 
 export type GetChooseImgs = (imgs: string[]) => void
@@ -96,7 +97,7 @@ const ModalImgServer = ({ open, close, callbackImgValues, of }: Props) => {
           {dataImgs && dataImgs.map(img => <ImgDetail callbackChooseImgs={setChooseImg} id={img.id} src={img.src} name={img.name} key={img.id} />)}
         </div>
         <Button handle={() => {
-          callbackImgValues && callbackImgValues(chooseImgs)
+          callbackImgValues && callbackImgValues({ value: chooseImgs })
           close(false)
         }} text="Hoàn Thành" />
       </div>

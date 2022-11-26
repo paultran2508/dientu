@@ -64,7 +64,6 @@ export function createBaseResolver<T>({ entity }: TypeBaseResolver<T>) {
 
       const resultError = new HandleErrorResponse(this.setErrors, error)
       this.setErrors = []
-      // console.log(this.setErrors)
       return {
         code: 100,
         message: "error base",
@@ -81,16 +80,11 @@ export function createBaseResolver<T>({ entity }: TypeBaseResolver<T>) {
         let dataEntity: Entity | null = null
         findIds && (dataEntity = await this.source.findOneBy(entity, findIds))
         if (dataEntity) return dataEntity
-        // console.log({ message: error?.message, code: "123", name: error?.name ?? "aa" })
         throw new HandleErrorResponse()
-
       } catch (e) {
-        this.setErrors.push({ message: error?.message, code: "123", name: error?.name ?? "aa" })
+        this.setErrors.push({ message: error?.message, code: "123", name: error?.name ?? "error" })
         throw new HandleErrorResponse()
       }
-
-
-
     }
 
 
@@ -101,21 +95,15 @@ export function createBaseResolver<T>({ entity }: TypeBaseResolver<T>) {
 
       values && values.length > 0 && (dataEntities = await this.source.save(entity, values));
       if (findIds) {
-
         for (const id of findIds) {
           id && dataEntities.push(await this.returnEntity({ entity, findIds: [id], error }))
         }
       }
-      // console.log(dataEntities)
       if (dataEntities) return dataEntities
-
       throw this.returnCatch("404", entity.constructor.name, "", error)
-
     }
-
     returnCatch(code: string, name: string, message?: string, error?: { name: string, message: string }): HandleErrorResponse {
       this.setErrors.push({ message: error?.message ?? message, name: error?.name ?? name, code })
-      console.log(1)
       throw new HandleErrorResponse()
     }
 

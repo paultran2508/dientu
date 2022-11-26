@@ -1,5 +1,6 @@
 import classNames from "classnames/bind"
-import { ProductsDocument, useProductsQuery } from "../../src/generated/graphql"
+import { useEffect } from "react"
+import { ProductsDocument, useProductsLazyQuery, useProductsQuery } from "../../src/generated/graphql"
 import { Button } from "../Lib/Button"
 import style from './product-category.module.scss'
 import ProductDetail from "./ProductDetail"
@@ -14,12 +15,18 @@ type Props = {
 // let products: ProductInfoFragment[] = []
 const ProductCategory = ({ categoryId, categoryName }: Props) => {
 
-  const { data, networkStatus, fetchMore } = useProductsQuery({
-    variables: { categoryId, limit: 2 },
-    notifyOnNetworkStatusChange: false,
-    fetchPolicy: "network-only"
+  const [setProductQuery, { data, fetchMore }] = useProductsLazyQuery({
+    variables: { categoryId, limit: 3, hasMore: true },
+
   })
 
+
+  useEffect(() => {
+    setProductQuery({ variables: { limit: 3, hasMore: true, skip: 0, categoryId } })
+
+  }, [data])
+
+  console.log(categoryId)
 
   const loadMore = async () => {
     const { loading: loadingMore, networkStatus } = await fetchMore({
@@ -51,7 +58,7 @@ const ProductCategory = ({ categoryId, categoryName }: Props) => {
       </div>
       <div className={cx('add-categories')}>
         {/* <>{console.log("render")}</> */}
-        {data?.productsByCategoryId.pagination?.hasMore ? <Button handle={loadMore} loading={networkStatus === 3} text="Xem thêm" /> : <>Hết</>}
+        {data?.productsByCategoryId.pagination?.hasMore ? <Button handle={loadMore} text="Xem thêm" /> : <>Hết</>}
 
       </div>
 

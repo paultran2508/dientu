@@ -19,46 +19,49 @@ export type Sort = {
 }
 function Table<T extends object>({ data, onPushData, onSortTable, loading, name }: Props<T>) {
 
-  const header = Object.keys(data[0])
+  const header = data.length > 0 ? Object.keys(data[0]) : []
   const values = data.map(value => Object.values(value))
 
+  return (
 
-  return <table className={cx("table")}>
-    <caption>  <h1>{name}</h1>   </caption>
-    <thead>
-      <tr>
-        {header.map(header =>
-          <th scope="col" key={header}>
-            <div className={cx("header")}>
-              <span>{header}</span>
-              <div className={cx("btn-sort")}>
-                <Button<Sort> icon="arrow_drop_up" data={{ name: header, sort: 1 }} handle={onSortTable} />
-                <Button<Sort> icon="arrow_drop_down" data={{ name: header, sort: -1 }} handle={onSortTable} />
-              </div>
+    <>
+      <h1>{name}</h1>
+      {data.length > 0 ? <table className={cx("table")}>
 
-            </div>
+        <thead>
+          <tr>
+            {header.map(header =>
+              <th scope="col" key={header}>
+                <div className={cx("header")}>
+                  <span>{header}</span>
+                  <div className={cx("btn-sort")}>
+                    <Button<Sort> icon="arrow_drop_up" data={{ name: header, sort: 1 }} handle={onSortTable} />
+                    <Button<Sort> icon="arrow_drop_down" data={{ name: header, sort: -1 }} handle={onSortTable} />
+                  </div>
 
-          </th>)}
-      </tr>
-    </thead>
-    <tbody>
+                </div>
 
-      {values.map((tr, index) => <tr key={index}>
-        {tr.map((td, id) => <td key={id} scope="row">{td}</td>)}
-      </tr>)}
+              </th>)}
+          </tr>
+        </thead>
+        <tbody>
+
+          {values.map((tr, index) => <tr key={index}>
+            {tr.map((td, id) => <td key={id} scope="row">{td}</td>)}
+          </tr>)}
 
 
-    </tbody>
-    <tfoot>
-      <tr>
-        <td scope="row" colSpan={header.length} ><Button loading={loading} text="Xêm thêm" handle={onPushData} /></td>
-        {/* <td colSpan={2}>77</td> */}
-        {/* <td></td> */}
-      </tr>
-    </tfoot>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td scope="row" colSpan={header.length} ><Button loading={loading} text="Xêm thêm" handle={onPushData} /></td>
+            {/* <td colSpan={2}>77</td> */}
+            {/* <td></td> */}
+          </tr>
+        </tfoot>
 
-  </table>
-
+      </table> : <i>Dữ liệu rỗng</i>}
+    </>)
 
 }
 

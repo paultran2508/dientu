@@ -1,0 +1,18 @@
+mutation AddAttribute($categoryIds: [String!]!, $attribute: String!) {
+  addAttribute(categoryIds: $categoryIds, attribute: $attribute) {
+    code
+    success
+    message
+    fieldErrors {
+      ...fieldErrorInfo
+    }
+    attributes {
+      id
+      name
+      values {
+        id
+        name
+      }
+    }
+  }
+}

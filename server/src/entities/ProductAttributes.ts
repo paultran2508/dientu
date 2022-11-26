@@ -1,5 +1,6 @@
+import { Categories } from './Categories';
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductValues } from "./ProductValues";
 
 
@@ -15,12 +16,12 @@ export class ProductAttributes extends BaseEntity {
   name!: string
 
   @Field(_type => [ProductValues])
-  @OneToMany(() => ProductValues, value => value.attribute, { cascade: true })
+  @OneToMany(() => ProductValues, value => value.attribute, { cascade: ["update", "insert", "recover"], })
   values: ProductValues[]
 
-  // @Field(_type => [Categories])
-  // @ManyToMany(() => Categories)
-  // @JoinTable()
-  // categories: Categories[]
 
+  @Field(() => [Categories])
+  @ManyToMany(() => Categories, value => value.attributes)
+  categories: Categories[]
+  
 }

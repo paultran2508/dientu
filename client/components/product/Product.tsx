@@ -30,8 +30,6 @@ const Product = ({ }: Props) => {
       query: CategoryDocument,
       variables: { limit: 1, cursor: data?.categories.pagination?.cursor },
       updateQuery(pre, { fetchMoreResult }) {
-
-
         return {
           categories: {
             ...fetchMoreResult.categories,

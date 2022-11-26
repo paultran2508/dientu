@@ -1,4 +1,4 @@
-import { Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import { ProductColors } from '../../entities/ProductColors';
 import { ProductValues } from "../../entities/ProductValues";
 import { createBaseResolver, TypeEntityExtension } from "../abstract/BaseResolver";
@@ -15,12 +15,20 @@ import { ProductValueMutationResponse } from './../../types/mutations/ProductVal
 
 const ProductValueBase = createBaseResolver({ name: "productValue", entity: ProductValues })
 
+@Resolver(_of => ProductAttributes)
 export class ProductValueResolver extends ProductValueBase {
   entityExtensions: TypeEntityExtension<ProductValues, keyof ProductValues>[];
   setErrors: FieldError[] = [];
 
+  @FieldResolver(() => [ProductValues])
+  values(
+    @Root() root: ProductAttributes
+  ) {
+    return ProductValues.find({ where: { attribute: { id: root.id } } })
+  }
+
+
   @Query(_type => ProductAttributeMutationResponse)
-  // @UseMiddleware(checkAuth)
   async productAttributes(
     @Arg('categoryId', { nullable: true }) categoryId?: string,
   ): Promise<ProductAttributeMutationResponse> {
@@ -30,12 +38,9 @@ export class ProductValueResolver extends ProductValueBase {
         relations: ["attributes.values"],
         where: { id: categoryId }
       })
-
-      // const attr = valuesData.map(att=> att.attributes)
       return this._return({
         attributes: valuesData[0].attributes
       })
-
     } catch (error) {
       return this.catchQuery(error)
     }
@@ -54,11 +59,28 @@ export class ProductValueResolver extends ProductValueBase {
   @UseMiddleware(checkAuth)
   async addAttribute(
     @Arg('attribute', _type => String) attribute: string,
+    @Arg('categoryIds', _type => [String]) categoryIds: string[],
     @Ctx() { dataSource }: Context
   ): Promise<ProductAttributeMutationResponse> {
     try {
-      const attributeData = await dataSource.getRepository(ProductAttributes).save({ name: attribute })
-      return this._return({ attribute: attributeData })
+      const attr = await dataSource.transaction(async source => {
+        this.source = source
+        return this.addEntity({
+          entity: ProductAttributes,
+          values: [{
+            name: attribute,
+            categories: await this.addEntity({
+              entity: Categories,
+              findIds: categoryIds.map(setCategory => ({ id: setCategory })),
+              error: { name: "category", message: "invalid" }
+            })
+          }]
+        })
+      })
+      const AttrData = ProductAttributes.create(attr)
+      console.log(AttrData)
+
+      return this._return({ attributes: AttrData })
     } catch (error) {
       return this.catchQuery(error)
     }
@@ -77,7 +99,10 @@ export class ProductValueResolver extends ProductValueBase {
       }
       const dataValue = await dataSource.transaction(async source => {
         this.source = source
-        const attribute = (await this.addEntity({ entity: ProductAttributes, findIds: [{ id: attributeId }] }))[0]
+        const attribute = (await this.addEntity({
+          entity: ProductAttributes,
+          findIds: [{ id: attributeId }]
+        }))[0]
         return await this.addEntity({
           entity: ProductValues,
           values: [{
@@ -86,7 +111,6 @@ export class ProductValueResolver extends ProductValueBase {
           }]
         })
       })
-
       return this._return({ value: dataValue[0] })
     } catch (error) {
       return this.catchQuery(error)

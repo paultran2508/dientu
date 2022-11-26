@@ -39,7 +39,7 @@ export class Categories extends BaseEntity {
   news?: News[]
 
   @Field(_type => [ProductAttributes])
-  @ManyToMany(() => ProductAttributes)
+  @ManyToMany(() => ProductAttributes, values => values.categories, { cascade: true })
   @JoinTable()
   attributes: ProductAttributes[]
 

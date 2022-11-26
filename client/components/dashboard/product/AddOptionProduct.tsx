@@ -52,6 +52,8 @@ const setValueOption: SetValueOption = (optionValue, value, attr?, name?) => {
     default:
       break;
   }
+  console.log(setOptionValue)
+
   return setOptionValue
 }
 
@@ -74,10 +76,11 @@ function AddOptionProduct({
     setModal(true)
   }
 
-  const getOptionValue: GetValueChange<any> = (input, attr, name) => {
+  const getOptionValue: GetValueChange<any> = ({ value, attr, name }) => {
 
-    const setOptionValue = setValueOption({ ...optionValue }, input, attr ? attr : "addImgs", name)
+    const setOptionValue = setValueOption({ ...optionValue }, value, attr ? attr : "addImgs", name)
     callbackValueChange(setOptionValue, indexOption)
+
   }
 
   const getValuePrice = (priceValue: AddPriceValue, indexOption: number, indexPrice: number) => {
