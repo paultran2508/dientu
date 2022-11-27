@@ -6,7 +6,7 @@ const nextConfig = {
     styledComponents: true
   },
   images: {
-    domains: ['i1-vnexpress.vnecdn.net', "i.ibb.co"]
+    domains: ['i1-thethao.vnecdn.net', "i.ibb.co"]
   },
 }
 

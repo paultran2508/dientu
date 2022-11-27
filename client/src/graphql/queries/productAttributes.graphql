@@ -1,4 +1,4 @@
-query ProductAttributes($categoryId: String!) {
+query ProductAttributes($categoryId: String) {
   productAttributes(categoryId: $categoryId) {
     code
     success

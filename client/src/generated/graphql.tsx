@@ -552,7 +552,7 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null };
 
 export type ProductAttributesQueryVariables = Exact<{
-  categoryId: Scalars['String'];
+  categoryId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1264,7 +1264,7 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const ProductAttributesDocument = gql`
-    query ProductAttributes($categoryId: String!) {
+    query ProductAttributes($categoryId: String) {
   productAttributes(categoryId: $categoryId) {
     code
     success
@@ -1292,7 +1292,7 @@ export const ProductAttributesDocument = gql`
  *   },
  * });
  */
-export function useProductAttributesQuery(baseOptions: Apollo.QueryHookOptions<ProductAttributesQuery, ProductAttributesQueryVariables>) {
+export function useProductAttributesQuery(baseOptions?: Apollo.QueryHookOptions<ProductAttributesQuery, ProductAttributesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ProductAttributesQuery, ProductAttributesQueryVariables>(ProductAttributesDocument, options);
       }

@@ -1,28 +1,37 @@
 import classNames from 'classnames/bind'
-import style from './SelectProduct.module.scss'
+import { useProductAttributesQuery } from '../../../src/generated/graphql'
+import { GetValueChange } from '../../../types/GetValueChange'
+import SelectInput from '../../Lib/select'
+import style from './select-product.module.scss'
 
 
 
 const cx = classNames.bind(style)
 
 type Props = {
-  name: string,
-  options: string[]
-  handle?: () => void
+  categoryId?: string
+  callbackValues?: GetValueChange<string>
 }
 
 
-const SelectProduct = ({ name, options, }: Props) => {
-  return (
-    <div className={cx('wrapper')}>
-      <label>{name}:</label>
-      <select>
-        <option value={''}>Tac ca</option>
-        {options.map((value, id) => (<option key={id} value={value}>{value}</option>))}
-      </select>
+const SelectProduct = ({ categoryId, callbackValues }: Props) => {
 
-    </div>
-  )
+  const { data } = useProductAttributesQuery({ variables: { categoryId: categoryId } })
+
+  return <div className={cx('wrapper')}>
+    {data?.productAttributes.attributes &&
+      data?.productAttributes.attributes.map(attrs =>
+        <SelectInput
+          all
+          getValueChange={callbackValues}
+          attr={attrs.name}
+          name={attrs.name}
+          key={attrs.id}
+          options={attrs.values.map(value =>
+            ({ name: value.name, value: value.id }))
+          }
+        />)}
+  </div>
 }
 
 export default SelectProduct

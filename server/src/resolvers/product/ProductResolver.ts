@@ -68,20 +68,24 @@ export class ProductResolver extends ProductsBaseResolver {
           where: {
             category: { id: categoryId },
             createAt: cursor ? LessThan(cursor) : cursor,
+            options: {
+              // values: { id: "de826937-1e8e-471f-857b-29909428f022" } || { name: "Amoledsss" },
+            }
           },
           order,
           skip,
           take: realLimit,
         })
       }
+      console.log(products.length > 0)
       return this._return({
         products,
         categoryId: categoryId,
         pagination: {
           cursor: products.length > 0 ? products.slice(-1)[0].createAt : undefined,
           totalCount,
-          hasMore: products.length > 0 ? true : false,
-          skip: skip,
+          hasMore: products.length > 0,
+          skip: skip ?? 0,
         }
       })
     } catch (error) {

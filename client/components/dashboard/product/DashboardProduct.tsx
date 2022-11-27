@@ -1,5 +1,5 @@
 import classNames from "classnames/bind"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { ProductMutationResponse, useDeleteProductMutation, useProductsLazyQuery } from "../../../src/generated/graphql"
 import { Button, HandleClickButton } from "../../Lib/Button"
 import Modal from "../../Lib/Modal"
@@ -39,7 +39,9 @@ const DashboardProduct = ({ }: Props) => {
     console.log(dataOption)
   }
 
-  const onDeleteProduct: HandleClickButton<string> = async (_, id) => {
+
+
+  const onDeleteProduct: HandleClickButton<string> = useCallback(async (_, id) => {
     if (id) {
       await deleteProduct({
         variables: { id },
@@ -56,7 +58,8 @@ const DashboardProduct = ({ }: Props) => {
         }
       })
     }
-  }
+  }, [deleteProduct])
+
 
   const callbackAddDataTable = async () => {
     const skip = dataProductQuery?.productsByCategoryId.pagination?.skip
@@ -100,7 +103,7 @@ const DashboardProduct = ({ }: Props) => {
       "Ngày tạo": product.createAt,
     }))
     setDataProductTable(product)
-  }, [dataProductQuery, sort])
+  }, [dataProductQuery, sort, onDeleteProduct, setProductQuery])
 
   const callbackOnAddOption = () => {
     refetch()

@@ -33,13 +33,17 @@ export class ProductValueResolver extends ProductValueBase {
     @Arg('categoryId', { nullable: true }) categoryId?: string,
   ): Promise<ProductAttributeMutationResponse> {
     try {
-      if (categoryId) console.log(categoryId)
-      const valuesData = await Categories.find({
-        relations: ["attributes.values"],
-        where: { id: categoryId }
+      const valuesData = await ProductAttributes.find({
+        where: { categories: { id: categoryId } }
       })
+
+      // const valuesData = await Categories.find({
+      //   relations: ["attributes.values"],
+      //   where: { id: categoryId }
+      // })
+      // console.log(valuesData)
       return this._return({
-        attributes: valuesData[0].attributes
+        attributes: valuesData
       })
     } catch (error) {
       return this.catchQuery(error)

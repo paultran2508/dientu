@@ -1,19 +1,18 @@
 import classNames from "classnames/bind"
-import SelectProduct from "../../components/product/SelectProduct"
+import { useState } from "react"
 import { DefaultLayout } from "../../layouts/DefaultLayout"
 import { CategoryDocument, useCategoryQuery } from "../../src/generated/graphql"
+import { GetValueChange } from "../../types/GetValueChange"
 import { Button } from "../Lib/Button"
 import style from './product.module.scss'
 import ProductCategory from "./ProductCategory"
+import SelectProduct from "./SelectProduct"
 
 type Props = {
 
 }
 
-const ram = ['4gb', '8gb', '16gb']
-const display = ['fullHD', 'HD']
-const rom = ['32gb', '64gb', '128gb']
-const cpu = ['core i3', 'core i5', 'core i7', 'core i9']
+
 
 const cx = classNames.bind(style)
 
@@ -24,6 +23,7 @@ const Product = ({ }: Props) => {
       limit: 1
     }
   })
+  const [findValues, setFindValues] = useState<{ [key: string]: string }>({})
 
   const onLoadMore = async () => {
     await fetchMore({
@@ -41,18 +41,32 @@ const Product = ({ }: Props) => {
     })
   }
 
-  const OnChangeValues = () => {
+  const onFindProduct = () => {
+    console.log(findValues)
 
   }
+
+  const onSetFindValue: GetValueChange<string> = ({ value, attr }) => {
+    setFindValues(values => {
+      values[attr as string] = value
+      if (value === "") {
+        delete values[attr as string]
+      }
+      console.log(values)
+      return values
+    }
+
+    )
+  }
+
+
 
 
   return (
     <div className={cx('wrapper')} >
       <div className={cx('filter')}>
-        <SelectProduct options={ram} name="Ram" handle={OnChangeValues} />
-        <SelectProduct options={cpu} name="CPU" handle={OnChangeValues} />
-        <SelectProduct options={rom} name="Rom" handle={OnChangeValues} />
-        <SelectProduct options={display} name="Man hinh" handle={OnChangeValues} />
+        <SelectProduct callbackValues={onSetFindValue} />
+        <Button handle={onFindProduct} text="Tìm kiếm" />
       </div>
       <hr />
       <div className={cx('ctn-product')}>

@@ -7,7 +7,7 @@ import CommentIcon from '@mui/icons-material/Comment';
 
 type Props = {
   name: string
-  img: any
+  img: string
   price: number
 }
 const cx = classNames.bind(style)
@@ -16,7 +16,7 @@ const ProductDetail = ({ img, name, price }: Props) => {
   return (
     <div className={cx('wrapper')}>
       <div className={cx('img')}>
-        <Image src={img} alt={name} />
+        <Image width={"300%"} height={"200%"} src={img} alt={name} />
       </div>
       <div className={cx('content')}>
         <h4>{name}</h4>
