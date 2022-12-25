@@ -41,7 +41,7 @@ export function createBaseResolver<T>({ entity }: TypeBaseResolver<T>) {
     public source: EntityManager
     public Entity: T = new entity()
     public fieldEntity: DeepPartial<T>;
-    abstract entityExtensions: TypeEntityExtension<T, keyof T>[]
+    // abstract entityExtensions: TypeEntityExtension<T, keyof T>[]
 
     getPagination(cursor?: Date, limit?: number) {
       const realLimit = Math.min(10, limit ?? 10)

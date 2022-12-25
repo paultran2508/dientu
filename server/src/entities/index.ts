@@ -1,3 +1,4 @@
+import { NewsCategories } from './NewsCategories';
 // import { ImgsToProduct } from './ImgsToProduct';
 import { ProductPrices } from './ProductPrices';
 import { ProductAttributes } from './ProductAttributes';
@@ -14,7 +15,7 @@ import { Brands } from './Brands';
 import { ProductColors } from './ProductColors';
 
 const entities: Function[] = [
-  Users, Products, ProductOptions, Imgs, ProductAttributes, ProductValues, Paths, Categories, ProductPrices, Contents, News, Brands, ProductColors
+  Users, Products, ProductOptions, Imgs, ProductAttributes, ProductValues, Paths, Categories, ProductPrices, Contents, News, Brands, ProductColors, NewsCategories
 ]
 
 export default entities

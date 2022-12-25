@@ -9,10 +9,11 @@ type Props = {
   name: string
   img: string
   price: number
+  option?: string[][]
 }
 const cx = classNames.bind(style)
 
-const ProductDetail = ({ img, name, price }: Props) => {
+const ProductDetail = ({ img, name, price, option }: Props) => {
   return (
     <div className={cx('wrapper')}>
       <div className={cx('img')}>
@@ -24,11 +25,14 @@ const ProductDetail = ({ img, name, price }: Props) => {
           <div className={cx('star')}>
             <div> <Rating name="half-rating-read" defaultValue={3.3} precision={0.5} readOnly />  <sup>(20)</sup></div>
           </div>
+
           <div className={cx('comment')}>
             <div><CommentIcon fontSize="inherit" /><sup>(20)</sup></div>
           </div>
         </div>
-
+        <div >
+          {option && option.map((t, index) => <span className={cx("item-value")} key={index}>{t.join(" - ")}</span>)}
+        </div>
         <div className={cx('price')}>
           <Button fullWidth icon="add_shopping_cart" text={<>{price.toString()} <sup>đ</sup></>} />
         </div>

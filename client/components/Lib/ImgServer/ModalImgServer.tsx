@@ -8,7 +8,7 @@ import style from "./modal-img-server.module.scss"
 
 const cx = classNames.bind(style)
 type Props = {
-  of?: ImgOf
+  of: ImgOf
   open: boolean
   close: Dispatch<SetStateAction<boolean>>
   callbackImgValues?: GetValueChange<string[]>
@@ -40,9 +40,9 @@ const ModalImgServer = ({ open, close, callbackImgValues, of }: Props) => {
       } else {
         const file = uploadFiles[0][0]
         const { } = await upload({
-          variables: { file },
+          variables: { file, of },
           update(cache, { data }) {
-            cache.updateQuery<{ showImgs: ImgMutationResponse }>({ query: ImgsDocument, variables: { of: ImgOf.Product } }, (dataUpdate) => {
+            cache.updateQuery<{ showImgs: ImgMutationResponse }>({ query: ImgsDocument, variables: { of: of } }, (dataUpdate) => {
               let newsImg;
               if (dataUpdate?.showImgs.imgs) {
                 newsImg = {

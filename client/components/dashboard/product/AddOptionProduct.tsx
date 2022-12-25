@@ -153,10 +153,12 @@ function AddOptionProduct({
           </div>)}
         </div>
       </div>
-      <ModalImgServer of={ImgOf.Product}
+      <ModalImgServer
+        of={ImgOf.Product}
         callbackImgValues={getOptionValue}
         open={modal}
-        close={setModal} />
+        close={setModal}
+      />
     </div>
   </>)
 }

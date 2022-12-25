@@ -1,3 +1,4 @@
+
 import { ImgResolver } from './product/ImgResolver';
 import { BrandResolver } from './product/BrandResolver';
 import { CategoryResolver } from './product/CategoryResolver';
@@ -6,6 +7,7 @@ import { Hello } from "./Hello"
 import { NonEmptyArray } from 'type-graphql';
 import { ProductResolver, ProductsBaseResolver } from './product/ProductResolver';
 import { ProductValueResolver } from './product/ProductValueResolver';
+import { NewsResolver } from './news/NewsResolver';
 
 
 const resolves: NonEmptyArray<Function> | NonEmptyArray<string> = [
@@ -16,7 +18,9 @@ const resolves: NonEmptyArray<Function> | NonEmptyArray<string> = [
   CategoryResolver,
   BrandResolver,
   ProductValueResolver,
-  ImgResolver
+  ImgResolver,
+  NewsResolver,
+
 ]
 
 export default resolves

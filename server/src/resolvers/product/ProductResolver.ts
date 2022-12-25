@@ -1,5 +1,5 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
-import { FindOptionsOrder, LessThan } from 'typeorm';
+import { FindOptionsOrder } from 'typeorm';
 import { Paths } from '../../entities/Paths';
 import { ProductColors } from '../../entities/ProductColors';
 import { Products } from '../../entities/Products';
@@ -14,6 +14,7 @@ import { PriceType, ProductPrices } from './../../entities/ProductPrices';
 import { ProductValues } from './../../entities/ProductValues';
 import { checkAuth } from './../../middleware/checkAuth';
 import { AddProductInput } from './../../types/inputs/addProductInput';
+import { FindInput } from './../../types/inputs/FindInput';
 import { SortInput } from './../../types/inputs/SortInput';
 import { FieldError } from './../../types/mutations/FieldError';
 
@@ -43,17 +44,18 @@ export class ProductResolver extends ProductsBaseResolver {
   async productsByCategoryId(
     @Arg('hasMore', _type => Boolean) hasMore: boolean,
     @Arg('categoryId', { nullable: true }) categoryId?: string,
-    @Arg('cursor', _type => Date, { nullable: true }) cursor?: Date,
+    // @Arg('cursor', _type => Date, { nullable: true }) cursor?: Date,
+    @Arg("find", () => FindInput, { nullable: true }) find?: FindInput,
     @Arg('limit', _type => Int, { nullable: true }) limit?: number,
     @Arg('sort', _type => SortInput, { nullable: true }) sort?: SortInput,
     @Arg('skip', _type => Int, { nullable: true }) skip?: number,
   ): Promise<ProductMutationResponse> {
     try {
+
       const realLimit: number = !limit || (limit > 50) ? 50 : limit
       const totalCount = await Products.count({ where: { categoryId: categoryId } })
       let products: Products[] = [];
       let order: FindOptionsOrder<Products>;
-
       order = sort ? { [sort.name]: sort.sort } : { createAt: -1 };
       if (sort?.name == "brand") {
         order = { brand: { name: sort.sort } }
@@ -62,22 +64,43 @@ export class ProductResolver extends ProductsBaseResolver {
         order = { category: { name: sort.sort } }
       }
 
+
       if (hasMore) {
         products = await Products.find({
           relations: ["category", "path", "options.prices.color", "options.values", "options.imgs", "brand"],
           where: {
             category: { id: categoryId },
-            createAt: cursor ? LessThan(cursor) : cursor,
             options: {
-              // values: { id: "de826937-1e8e-471f-857b-29909428f022" } || { name: "Amoledsss" },
-            }
+              values: {
+                // value: { id }
+              }
+            },
           },
           order,
           skip,
           take: realLimit,
         })
       }
-      console.log(products.length > 0)
+
+      // if (find) {
+      //   products = await Products.createQueryBuilder('product')
+      //     .leftJoin('product.options.values', 'point', 'point.id != :id', { id })
+      //     .getMany();
+      // }
+
+      if (find) {
+        console.log(find.values)
+        products = products.filter(items => {
+          let ok: boolean = false;
+          items.options.forEach(option => {
+
+            ok = find?.values.every(check => option.values.map(value => value.id).includes(check))
+            console.log(option.values.map(value => value.name))
+          })
+          return ok
+        })
+      }
+      // console.log(find)
       return this._return({
         products,
         categoryId: categoryId,

@@ -1,7 +1,7 @@
-query Products($limit: Int, $cursor: DateTime, $categoryId: String, $hasMore: Boolean!, $sort: SortInput, $skip: Int) {
+query Products($limit: Int, $find: FindInput, $categoryId: String, $hasMore: Boolean!, $sort: SortInput, $skip: Int) {
   productsByCategoryId(
     categoryId: $categoryId
-    cursor: $cursor
+    find: $find
     limit: $limit
     hasMore: $hasMore
     sort: $sort

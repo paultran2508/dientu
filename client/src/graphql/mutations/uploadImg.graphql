@@ -1,5 +1,5 @@
-mutation UploadImg($file: Upload!) {
-  uploadImg(file: $file) {
+mutation UploadImg($file: Upload!, $of: ImgOf!) {
+  uploadImg(file: $file, of: $of) {
     ...imgMutationResponse
   }
 }

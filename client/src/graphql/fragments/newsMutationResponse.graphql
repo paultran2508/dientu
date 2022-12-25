@@ -1,0 +1,12 @@
+fragment newsMutationResponse on NewsMutationResponse {
+  code
+  message
+  success
+  fieldErrors {
+    ...fieldErrorInfo
+  }
+  news {
+    id
+    title
+  }
+}

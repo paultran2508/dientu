@@ -32,6 +32,13 @@ export type AddImgInput = {
   img: Scalars['String'];
 };
 
+export type AddNewsInput = {
+  img: Scalars['String'];
+  newsCategoryId: Scalars['String'];
+  path: Scalars['String'];
+  title: Scalars['String'];
+};
+
 export type AddProductInput = {
   addOptions: Array<AddProductOptionInput>;
   brandId: Scalars['String'];
@@ -112,6 +119,11 @@ export type FieldError = {
   name: Scalars['String'];
 };
 
+export type FindInput = {
+  name: Scalars['String'];
+  values: Array<Scalars['String']>;
+};
+
 export type IMutationResponse = {
   code: Scalars['Float'];
   fieldErrors?: Maybe<Array<FieldError>>;
@@ -161,6 +173,7 @@ export type Mutation = {
   addAttribute: ProductAttributeMutationResponse;
   addBrand: BrandMutationResponse;
   addCategory: CategoryMutationResponse;
+  addNews: NewsMutationResponse;
   addProduct: ProductMutationResponse;
   addProductValue: ProductValueMutationResponse;
   deleteProduct: Scalars['Boolean'];
@@ -185,6 +198,11 @@ export type MutationAddBrandArgs = {
 
 export type MutationAddCategoryArgs = {
   addCategoryInput: AddCategoryInput;
+};
+
+
+export type MutationAddNewsArgs = {
+  addNewsInput: AddNewsInput;
 };
 
 
@@ -220,17 +238,44 @@ export type MutationRegisterArgs = {
 
 export type MutationUploadImgArgs = {
   file: Scalars['Upload'];
+  of: ImgOf;
 };
 
 export type News = {
   __typename?: 'News';
-  category: Categories;
+  category: NewsCategories;
   content: Contents;
   id: Scalars['String'];
   img: Imgs;
   path: Paths;
   title: Scalars['String'];
   top: Scalars['Float'];
+};
+
+export type NewsCategories = {
+  __typename?: 'NewsCategories';
+  id: Scalars['String'];
+  img: Imgs;
+  name: Scalars['String'];
+  news: Array<News>;
+};
+
+export type NewsCategoriesMutationResponse = IMutationResponse & {
+  __typename?: 'NewsCategoriesMutationResponse';
+  code: Scalars['Float'];
+  fieldErrors?: Maybe<Array<FieldError>>;
+  message: Scalars['String'];
+  newsCategories?: Maybe<Array<NewsCategories>>;
+  success: Scalars['Boolean'];
+};
+
+export type NewsMutationResponse = IMutationResponse & {
+  __typename?: 'NewsMutationResponse';
+  code: Scalars['Float'];
+  fieldErrors?: Maybe<Array<FieldError>>;
+  message: Scalars['String'];
+  news?: Maybe<Array<News>>;
+  success: Scalars['Boolean'];
 };
 
 export type Pagination = {
@@ -357,6 +402,7 @@ export type Query = {
   productsByCategoryId: ProductMutationResponse;
   showBrands: BrandMutationResponse;
   showImgs: ImgMutationResponse;
+  showNewsCategories: NewsCategoriesMutationResponse;
   showProducts: ProductMutationResponse;
 };
 
@@ -374,7 +420,7 @@ export type QueryProductAttributesArgs = {
 
 export type QueryProductsByCategoryIdArgs = {
   categoryId?: InputMaybe<Scalars['String']>;
-  cursor?: InputMaybe<Scalars['DateTime']>;
+  find?: InputMaybe<FindInput>;
   hasMore: Scalars['Boolean'];
   limit?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -437,6 +483,10 @@ export type ImgInfoFragment = { __typename?: 'Imgs', name: string, type: string,
 
 export type ImgMutationResponseFragment = { __typename?: 'ImgMutationResponse', code: number, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, img?: { __typename?: 'Imgs', name: string, type: string, id: string, src: string, Of: ImgOf } | null };
 
+export type NewsCategoriesMutationResponseFragment = { __typename?: 'NewsCategoriesMutationResponse', code: number, message: string, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, newsCategories?: Array<{ __typename?: 'NewsCategories', name: string, id: string }> | null };
+
+export type NewsMutationResponseFragment = { __typename?: 'NewsMutationResponse', code: number, message: string, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, news?: Array<{ __typename?: 'News', id: string, title: string }> | null };
+
 export type PaginationFragment = { __typename?: 'Pagination', cursor?: any | null, hasMore: boolean, totalCount: number, skip: number };
 
 export type PathInfoFragment = { __typename?: 'Paths', name: string, id: string };
@@ -466,6 +516,13 @@ export type AddAttributeMutationVariables = Exact<{
 
 
 export type AddAttributeMutation = { __typename?: 'Mutation', addAttribute: { __typename?: 'ProductAttributeMutationResponse', code: number, success: boolean, message: string, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, attributes?: Array<{ __typename?: 'ProductAttributes', id: string, name: string, values: Array<{ __typename?: 'ProductValues', id: string, name: string }> }> | null } };
+
+export type AddNewsMutationVariables = Exact<{
+  addNewsInput: AddNewsInput;
+}>;
+
+
+export type AddNewsMutation = { __typename?: 'Mutation', addNews: { __typename?: 'NewsMutationResponse', code: number, message: string, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, news?: Array<{ __typename?: 'News', id: string, title: string }> | null } };
 
 export type AddProductMutationVariables = Exact<{
   productOptionInput: AddProductInput;
@@ -516,6 +573,7 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 
 export type UploadImgMutationVariables = Exact<{
   file: Scalars['Upload'];
+  of: ImgOf;
 }>;
 
 
@@ -551,6 +609,11 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'Users', id: string, avatar: string, email: string, theme: string } | null };
 
+export type NewsCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NewsCategoriesQuery = { __typename?: 'Query', showNewsCategories: { __typename?: 'NewsCategoriesMutationResponse', code: number, message: string, success: boolean, fieldErrors?: Array<{ __typename?: 'FieldError', name: string, message?: string | null, code?: string | null }> | null, newsCategories?: Array<{ __typename?: 'NewsCategories', name: string, id: string }> | null } };
+
 export type ProductAttributesQueryVariables = Exact<{
   categoryId?: InputMaybe<Scalars['String']>;
 }>;
@@ -565,7 +628,7 @@ export type ProductColorsQuery = { __typename?: 'Query', productColors: { __type
 
 export type ProductsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
-  cursor?: InputMaybe<Scalars['DateTime']>;
+  find?: InputMaybe<FindInput>;
   categoryId?: InputMaybe<Scalars['String']>;
   hasMore: Scalars['Boolean'];
   sort?: InputMaybe<SortInput>;
@@ -642,6 +705,34 @@ export const ImgMutationResponseFragmentDoc = gql`
 }
     ${FieldErrorInfoFragmentDoc}
 ${ImgInfoFragmentDoc}`;
+export const NewsCategoriesMutationResponseFragmentDoc = gql`
+    fragment newsCategoriesMutationResponse on NewsCategoriesMutationResponse {
+  code
+  message
+  success
+  fieldErrors {
+    ...fieldErrorInfo
+  }
+  newsCategories {
+    name
+    id
+  }
+}
+    ${FieldErrorInfoFragmentDoc}`;
+export const NewsMutationResponseFragmentDoc = gql`
+    fragment newsMutationResponse on NewsMutationResponse {
+  code
+  message
+  success
+  fieldErrors {
+    ...fieldErrorInfo
+  }
+  news {
+    id
+    title
+  }
+}
+    ${FieldErrorInfoFragmentDoc}`;
 export const PathInfoFragmentDoc = gql`
     fragment pathInfo on Paths {
   name
@@ -812,6 +903,39 @@ export function useAddAttributeMutation(baseOptions?: Apollo.MutationHookOptions
 export type AddAttributeMutationHookResult = ReturnType<typeof useAddAttributeMutation>;
 export type AddAttributeMutationResult = Apollo.MutationResult<AddAttributeMutation>;
 export type AddAttributeMutationOptions = Apollo.BaseMutationOptions<AddAttributeMutation, AddAttributeMutationVariables>;
+export const AddNewsDocument = gql`
+    mutation AddNews($addNewsInput: AddNewsInput!) {
+  addNews(addNewsInput: $addNewsInput) {
+    ...newsMutationResponse
+  }
+}
+    ${NewsMutationResponseFragmentDoc}`;
+export type AddNewsMutationFn = Apollo.MutationFunction<AddNewsMutation, AddNewsMutationVariables>;
+
+/**
+ * __useAddNewsMutation__
+ *
+ * To run a mutation, you first call `useAddNewsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddNewsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addNewsMutation, { data, loading, error }] = useAddNewsMutation({
+ *   variables: {
+ *      addNewsInput: // value for 'addNewsInput'
+ *   },
+ * });
+ */
+export function useAddNewsMutation(baseOptions?: Apollo.MutationHookOptions<AddNewsMutation, AddNewsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddNewsMutation, AddNewsMutationVariables>(AddNewsDocument, options);
+      }
+export type AddNewsMutationHookResult = ReturnType<typeof useAddNewsMutation>;
+export type AddNewsMutationResult = Apollo.MutationResult<AddNewsMutation>;
+export type AddNewsMutationOptions = Apollo.BaseMutationOptions<AddNewsMutation, AddNewsMutationVariables>;
 export const AddProductDocument = gql`
     mutation AddProduct($productOptionInput: AddProductInput!) {
   addProduct(productOptionInput: $productOptionInput) {
@@ -1042,8 +1166,8 @@ export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const UploadImgDocument = gql`
-    mutation UploadImg($file: Upload!) {
-  uploadImg(file: $file) {
+    mutation UploadImg($file: Upload!, $of: ImgOf!) {
+  uploadImg(file: $file, of: $of) {
     ...imgMutationResponse
   }
 }
@@ -1064,6 +1188,7 @@ export type UploadImgMutationFn = Apollo.MutationFunction<UploadImgMutation, Upl
  * const [uploadImgMutation, { data, loading, error }] = useUploadImgMutation({
  *   variables: {
  *      file: // value for 'file'
+ *      of: // value for 'of'
  *   },
  * });
  */
@@ -1263,6 +1388,40 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const NewsCategoriesDocument = gql`
+    query NewsCategories {
+  showNewsCategories {
+    ...newsCategoriesMutationResponse
+  }
+}
+    ${NewsCategoriesMutationResponseFragmentDoc}`;
+
+/**
+ * __useNewsCategoriesQuery__
+ *
+ * To run a query within a React component, call `useNewsCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNewsCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewsCategoriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNewsCategoriesQuery(baseOptions?: Apollo.QueryHookOptions<NewsCategoriesQuery, NewsCategoriesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NewsCategoriesQuery, NewsCategoriesQueryVariables>(NewsCategoriesDocument, options);
+      }
+export function useNewsCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NewsCategoriesQuery, NewsCategoriesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NewsCategoriesQuery, NewsCategoriesQueryVariables>(NewsCategoriesDocument, options);
+        }
+export type NewsCategoriesQueryHookResult = ReturnType<typeof useNewsCategoriesQuery>;
+export type NewsCategoriesLazyQueryHookResult = ReturnType<typeof useNewsCategoriesLazyQuery>;
+export type NewsCategoriesQueryResult = Apollo.QueryResult<NewsCategoriesQuery, NewsCategoriesQueryVariables>;
 export const ProductAttributesDocument = gql`
     query ProductAttributes($categoryId: String) {
   productAttributes(categoryId: $categoryId) {
@@ -1347,10 +1506,10 @@ export type ProductColorsQueryHookResult = ReturnType<typeof useProductColorsQue
 export type ProductColorsLazyQueryHookResult = ReturnType<typeof useProductColorsLazyQuery>;
 export type ProductColorsQueryResult = Apollo.QueryResult<ProductColorsQuery, ProductColorsQueryVariables>;
 export const ProductsDocument = gql`
-    query Products($limit: Int, $cursor: DateTime, $categoryId: String, $hasMore: Boolean!, $sort: SortInput, $skip: Int) {
+    query Products($limit: Int, $find: FindInput, $categoryId: String, $hasMore: Boolean!, $sort: SortInput, $skip: Int) {
   productsByCategoryId(
     categoryId: $categoryId
-    cursor: $cursor
+    find: $find
     limit: $limit
     hasMore: $hasMore
     sort: $sort
@@ -1374,7 +1533,7 @@ export const ProductsDocument = gql`
  * const { data, loading, error } = useProductsQuery({
  *   variables: {
  *      limit: // value for 'limit'
- *      cursor: // value for 'cursor'
+ *      find: // value for 'find'
  *      categoryId: // value for 'categoryId'
  *      hasMore: // value for 'hasMore'
  *      sort: // value for 'sort'

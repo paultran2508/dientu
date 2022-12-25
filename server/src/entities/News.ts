@@ -1,8 +1,8 @@
 import { Field, ObjectType } from "type-graphql";
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Categories } from "./Categories";
 import { Contents } from "./Contents";
 import { Imgs } from "./Imgs";
+import { NewsCategories } from './NewsCategories';
 import { Paths } from "./Paths";
 
 @ObjectType()
@@ -17,7 +17,7 @@ export class News extends BaseEntity {
   title!: string
 
   @Field()
-  @Column()
+  @Column({ default: 2 })
   top!: number
 
   @Field(_return => Imgs)
@@ -31,12 +31,12 @@ export class News extends BaseEntity {
   content: Contents
 
   @Field()
-  @OneToOne(() => Paths)
+  @OneToOne(() => Paths, { cascade: true, onDelete: "CASCADE" })
   @JoinColumn()
   path: Paths
 
-  @Field(_type => Categories)
-  @ManyToOne(() => Categories, category => category.news)
-  category: Categories
+  @Field(_type => NewsCategories)
+  @ManyToOne(() => NewsCategories, category => category.news, { cascade: true })
+  category: NewsCategories
 
 }

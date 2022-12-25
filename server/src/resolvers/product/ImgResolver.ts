@@ -37,6 +37,8 @@ export class ImgResolver extends ImgBase {
   @Mutation(_return => ImgMutationResponse)
   async uploadImg(
     @Arg("file", () => require('graphql-upload/GraphQLUpload.js')) file: FileUpload,
+    @Arg("of", () => ImgOf) of: ImgOf,
+
     @Ctx() { }: Context
   ): Promise<ImgMutationResponse> {
     try {
@@ -50,6 +52,7 @@ export class ImgResolver extends ImgBase {
         apiKey: "a6941ddb71c5a2eab66d344616c7ca3d",
         base64string: (await buffer(file.createReadStream())).toString("base64"),
         name: file.filename,
+
       })
 
       if (!res.display_url) {
@@ -58,7 +61,7 @@ export class ImgResolver extends ImgBase {
       }
       const imgData = await Imgs.save({
         name: file.filename,
-        Of: ImgOf.PRODUCT,
+        Of: of,
         type: ImgType.JPG,
         src: res.display_url
       })
